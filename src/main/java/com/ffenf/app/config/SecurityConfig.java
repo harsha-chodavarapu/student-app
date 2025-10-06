@@ -3,9 +3,9 @@ package com.ffenf.app.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -23,18 +23,26 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/**").permitAll()
+				// Public root and static assets
+				.requestMatchers("/", "/index.html", "/static/**", "/assets/**").permitAll()
+
+				// Public health endpoints
 				.requestMatchers("/health").permitAll()
+				.requestMatchers("/actuator/health", "/actuator/info").permitAll()
+
+				// Public auth and selected APIs (adjust later as needed)
+				.requestMatchers("/auth/**").permitAll()
 				.requestMatchers("/materials/search").permitAll()
-				.requestMatchers("/askhub/questions").permitAll()  // Allow reading questions without auth
-				.requestMatchers("/askhub/questions/{id}").permitAll()
-				.requestMatchers("/askhub/questions/search").permitAll()
-				.requestMatchers("/askhub/generate").permitAll()
+				.requestMatchers("/askhub/**").permitAll()
 				.requestMatchers("/ai/**").permitAll()
-				.anyRequest().authenticated()
+
+				// TEMP: open everything to remove Basic Auth prompt
+				.anyRequest().permitAll()
 			)
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.httpBasic(Customizer.withDefaults());
+			// Disable browser Basic Auth prompt
+			.httpBasic(AbstractHttpConfigurer::disable);
+
 		return http.build();
 	}
 
@@ -43,5 +51,3 @@ public class SecurityConfig {
 		return configuration.getAuthenticationManager();
 	}
 }
-
-
