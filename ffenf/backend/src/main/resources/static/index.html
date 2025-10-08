@@ -16387,7 +16387,7 @@
                     </div>
                     <div class="form-group">
                         <label for="searchSortBy">Sort By:</label>
-                        <select id="searchSortBy" onchange="handleSortChange()">
+                        <select id="searchSortBy" onchange="triggerSort()">
                             <option value="createdAt">Created At</option>
                             <option value="avgRating">Average Rating</option>
                             <option value="downloadsCount">Downloads</option>
@@ -16395,7 +16395,7 @@
                     </div>
                     <div class="form-group">
                         <label for="searchSortDir">Sort Direction:</label>
-                        <select id="searchSortDir" onchange="handleSortChange()">
+                        <select id="searchSortDir" onchange="triggerSort()">
                             <option value="desc">Descending</option>
                             <option value="asc">Ascending</option>
                         </select>
@@ -16920,15 +16920,11 @@
             }
         }
 
-        // Global variable to track if we have performed an initial search
-        let hasPerformedInitialSearch = false;
-
-        function handleSortChange() {
-            console.log('Sort option changed');
-            // Only trigger search if we have already performed an initial search
-            if (hasPerformedInitialSearch) {
-                searchMaterials();
-            }
+        // Simple function to trigger sorting immediately
+        function triggerSort() {
+            console.log('Sort triggered');
+            // Always perform search when sort options change
+            searchMaterials();
         }
 
         async function searchMaterials() {
@@ -16971,9 +16967,6 @@
                 console.log('Search response data:', data);
                 displayMaterials(data.materials, 'searchResults');
                 showStatus(`Found ${data.materials.length} materials (sorted by ${sortBy} ${sortDir})`, 'success', 'searchMessage');
-                
-                // Mark that we have performed an initial search
-                hasPerformedInitialSearch = true;
                 
             } catch (error) {
                 console.error('Search error:', error);
