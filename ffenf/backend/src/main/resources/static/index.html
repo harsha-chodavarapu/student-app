@@ -1856,7 +1856,7 @@
         [data-theme="dark"] .search-form {
             background: var(--bg-tertiary);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
@@ -15515,7 +15515,7 @@
             gap: 24px;
             padding: 20px 0;
         }
-        
+
         .ask-section {
             display: block !important;
         }
@@ -16411,31 +16411,31 @@
             <!-- Search Section -->
             <div id="searchContent" class="content-section hidden">
                 <h2 class="section-title">Search Materials</h2>
-                <div class="search-form" style="display: flex; flex-direction: column; gap: 20px;">
-                    <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <label for="searchQuery" style="font-size: 16px; font-weight: 600;">Search Query:</label>
-                            <input type="text" id="searchQuery" placeholder="Search by title, subject, or course code" style="width: 250px; padding: 12px 16px; border-radius: 8px; border: 2px solid #9C27B0; background: #2c2c2c; color: white; font-size: 14px;">
-                        </div>
+                <div class="search-form" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label for="searchQuery" style="font-size: 13px;">Search Query:</label>
+                            <input type="text" id="searchQuery" placeholder="Search by title, subject, or course code" style="width: 180px; padding: 6px 8px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white; font-size: 12px;">
+                    </div>
                         
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <label style="font-size: 16px; font-weight: 600;">Sort By:</label>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn" onclick="setSortBy('createdAt')" id="sortByCreatedAt" style="background-color: #4CAF50; padding: 10px 16px; font-size: 14px;">Created At</button>
-                                <button class="btn" onclick="setSortBy('avgRating')" id="sortByRating" style="background-color: #2196F3; padding: 10px 16px; font-size: 14px;">Average Rating</button>
-                                <button class="btn" onclick="setSortBy('downloadsCount')" id="sortByDownloads" style="background-color: #FF9800; padding: 10px 16px; font-size: 14px;">Downloads</button>
+                        <div style="display: flex; flex-direction: column; gap: 3px;">
+                            <label style="font-size: 13px;">Sort By:</label>
+                            <div style="display: flex; gap: 4px;">
+                                <button class="btn" onclick="setSortBy('createdAt')" id="sortByCreatedAt" style="background-color: #4CAF50; padding: 6px 10px; font-size: 11px;">Created At</button>
+                                <button class="btn" onclick="setSortBy('avgRating')" id="sortByRating" style="background-color: #2196F3; padding: 6px 10px; font-size: 11px;">Average Rating</button>
+                                <button class="btn" onclick="setSortBy('downloadsCount')" id="sortByDownloads" style="background-color: #FF9800; padding: 6px 10px; font-size: 11px;">Downloads</button>
+                    </div>
+                    </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 3px;">
+                            <label style="font-size: 13px;">Sort Direction:</label>
+                            <div style="display: flex; gap: 4px;">
+                                <button class="btn" onclick="setSortDir('desc')" id="sortDirDesc" style="background-color: #9C27B0; padding: 6px 10px; font-size: 11px;">Descending</button>
+                                <button class="btn" onclick="setSortDir('asc')" id="sortDirAsc" style="background-color: #E91E63; padding: 6px 10px; font-size: 11px;">Ascending</button>
                             </div>
                         </div>
                         
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <label style="font-size: 16px; font-weight: 600;">Sort Direction:</label>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn" onclick="setSortDir('desc')" id="sortDirDesc" style="background-color: #9C27B0; padding: 10px 16px; font-size: 14px;">Descending</button>
-                                <button class="btn" onclick="setSortDir('asc')" id="sortDirAsc" style="background-color: #E91E63; padding: 10px 16px; font-size: 14px;">Ascending</button>
-                            </div>
-                        </div>
-                        
-                        <button class="btn" onclick="searchMaterials()" style="padding: 12px 24px; font-size: 16px;">Search</button>
+                        <button class="btn" onclick="searchMaterials()" style="padding: 6px 12px; font-size: 12px;">Search</button>
                     </div>
                 </div>
                 <div id="searchMessage" class="status-message"></div>
@@ -18903,7 +18903,7 @@
                                 </div>
                             `).join('')
                         }
-                        <div class="ask-for-answer" style="margin-top: 20px;">
+                            <div class="ask-for-answer" style="margin-top: 20px;">
                             <div class="answer-form-inline">
                                 <textarea id="inlineAnswerContent" placeholder="Write your answer here..." rows="4" style="width: 100%; margin-bottom: 15px; padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
                                 <div class="answer-options" style="margin-bottom: 15px;">
