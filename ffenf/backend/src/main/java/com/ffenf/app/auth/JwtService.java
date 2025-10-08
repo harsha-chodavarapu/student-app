@@ -15,7 +15,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-	@Value("${app.jwt.secret:ZmZlbmYtc2VjcmV0LWF0LWxlYXN0LTMyLWNoYXJzLWJhc2U2NA==}")
+	@Value("${app.jwt.secret:1B0D1704AA029EEB285A4B7857AEEF48FDC2A2782E33CD7375BF67FCAA5A138D}")
 	private String secretBase64;
 
 	@Value("${app.jwt.ttlSeconds:3600}")
@@ -25,10 +25,21 @@ public class JwtService {
 		System.out.println("JwtService - secretBase64: " + (secretBase64 != null ? secretBase64.substring(0, Math.min(10, secretBase64.length())) + "..." : "NULL"));
 		System.out.println("JwtService - Environment APP_JWT_SECRET: " + System.getenv("APP_JWT_SECRET"));
 		System.out.println("JwtService - Environment app.jwt.secret: " + System.getProperty("app.jwt.secret"));
-		if (secretBase64 == null) {
-			throw new IllegalStateException("JWT secret is null! Check APP_JWT_SECRET environment variable.");
+		
+		String jwtSecret = secretBase64;
+		if (jwtSecret == null || jwtSecret.isEmpty()) {
+			// Fallback to direct environment variable access
+			jwtSecret = System.getenv("APP_JWT_SECRET");
+			System.out.println("JwtService - Using environment variable: " + (jwtSecret != null ? jwtSecret.substring(0, Math.min(10, jwtSecret.length())) + "..." : "NULL"));
 		}
-		byte[] keyBytes = Decoders.BASE64.decode(secretBase64);
+		
+		if (jwtSecret == null || jwtSecret.isEmpty()) {
+			// Final fallback
+			jwtSecret = "1B0D1704AA029EEB285A4B7857AEEF48FDC2A2782E33CD7375BF67FCAA5A138D";
+			System.out.println("JwtService - Using hardcoded fallback");
+		}
+		
+		byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
