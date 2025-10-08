@@ -69,6 +69,19 @@ public class MaterialsController {
         ));
     }
 
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadMaterialRedirect(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("title") String title,
+            @RequestParam(value = "subject", required = false) String subject,
+            @RequestParam(value = "courseCode", required = false) String courseCode,
+            @RequestParam(value = "tags", required = false) List<String> tags,
+            HttpServletRequest request) {
+        
+        System.out.println("=== OLD UPLOAD ENDPOINT CALLED - REDIRECTING TO NEW ===");
+        // Redirect to the new endpoint
+        return uploadMaterialNew(file, title, subject, courseCode, tags, request);
+    }
 
     @PostMapping("/upload-new")
     public ResponseEntity<?> uploadMaterialNew(
