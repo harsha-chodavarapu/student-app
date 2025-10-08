@@ -252,22 +252,28 @@ public class MaterialsController {
                                    @RequestParam(defaultValue = "20") int size,
                                    Authentication auth) {
         
-        Pageable pageable = PageRequest.of(page, size, Sort.by("avgRating").descending()
-                .and(Sort.by("createdAt").descending()));
-        
-        Page<Material> results;
-        
-        if (q.isEmpty() && subject == null && courseCode == null) {
-            results = materials.findAll(pageable);
-        } else {
-            // Simple search - in production, use full-text search
-            if (!q.isEmpty()) {
-                results = materials.findByTitleContainingIgnoreCaseOrSubjectContainingIgnoreCaseOrCourseCodeContainingIgnoreCase(
-                    q, q, q, pageable);
-            } else {
+        try {
+            System.out.println("Search request - q: " + q + ", subject: " + subject + ", courseCode: " + courseCode + ", page: " + page + ", size: " + size);
+            
+            Pageable pageable = PageRequest.of(page, size, Sort.by("avgRating").descending()
+                    .and(Sort.by("createdAt").descending()));
+            
+            Page<Material> results;
+            
+            if (q.isEmpty() && subject == null && courseCode == null) {
+                System.out.println("Searching all materials");
                 results = materials.findAll(pageable);
+            } else {
+                // Simple search - in production, use full-text search
+                if (!q.isEmpty()) {
+                    System.out.println("Searching with query: " + q);
+                    results = materials.findByTitleContainingIgnoreCaseOrSubjectContainingIgnoreCaseOrCourseCodeContainingIgnoreCase(
+                        q, q, q, pageable);
+                } else {
+                    System.out.println("Searching all materials (no query)");
+                    results = materials.findAll(pageable);
+                }
             }
-        }
 
         List<Map<String, Object>> materialsList = results.getContent().stream()
             .map(m -> {
@@ -319,6 +325,16 @@ public class MaterialsController {
         response.put("totalPages", results.getTotalPages());
         response.put("currentPage", page);
         return ResponseEntity.ok(response);
+        
+        } catch (Exception e) {
+            System.err.println("Search error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of(
+                "error", "Search failed",
+                "message", e.getMessage(),
+                "details", e.getClass().getSimpleName()
+            ));
+        }
     }
 
     @GetMapping("/{id}")
