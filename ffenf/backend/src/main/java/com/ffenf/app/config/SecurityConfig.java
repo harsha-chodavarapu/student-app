@@ -38,6 +38,7 @@ public class SecurityConfig {
 				.requestMatchers("/askhub/questions/search").permitAll()
 				.requestMatchers("/askhub/generate").permitAll()
                 .requestMatchers("/ai/**").permitAll()
+                .requestMatchers("/admin/cleanup/**").permitAll()
                 .anyRequest().permitAll()
 			)
             .addFilterBefore(requestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
