@@ -60,26 +60,6 @@ public class MaterialsController {
 
     public record SearchRequest(String q, String subject, String courseCode, int page, int size) {}
 
-    @GetMapping("/upload/test")
-    public ResponseEntity<?> testUpload(Authentication auth) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", System.currentTimeMillis());
-        response.put("auth", auth != null ? auth.getName() : "null");
-        response.put("authorities", auth != null ? auth.getAuthorities() : "null");
-        response.put("message", "Upload test endpoint working");
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/upload/test")
-    public ResponseEntity<?> testUploadPost(Authentication auth, HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", System.currentTimeMillis());
-        response.put("auth", auth != null ? auth.getName() : "null");
-        response.put("authorities", auth != null ? auth.getAuthorities() : "null");
-        response.put("authHeader", request.getHeader("Authorization"));
-        response.put("message", "Upload test POST endpoint working");
-        return ResponseEntity.ok(response);
-    }
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadMaterial(
@@ -91,6 +71,7 @@ public class MaterialsController {
             Authentication auth,
             HttpServletRequest request) {
         
+        System.out.println("=== UPLOAD METHOD CALLED ===");
         System.out.println("=== UPLOAD DEBUG START ===");
         System.out.println("Request URI: " + request.getRequestURI());
         System.out.println("Request Method: " + request.getMethod());
