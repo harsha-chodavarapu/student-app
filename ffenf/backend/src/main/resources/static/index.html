@@ -16387,7 +16387,7 @@
                     </div>
                     <div class="form-group">
                         <label for="searchSortBy">Sort By:</label>
-                        <select id="searchSortBy" onchange="searchMaterials()">
+                        <select id="searchSortBy" onchange="console.log('Sort By changed to:', this.value); searchMaterials();">
                             <option value="createdAt">Created At</option>
                             <option value="avgRating">Average Rating</option>
                             <option value="downloadsCount">Downloads</option>
@@ -16395,7 +16395,7 @@
                     </div>
                     <div class="form-group">
                         <label for="searchSortDir">Sort Direction:</label>
-                        <select id="searchSortDir" onchange="searchMaterials()">
+                        <select id="searchSortDir" onchange="console.log('Sort Direction changed to:', this.value); searchMaterials();">
                             <option value="desc">Descending</option>
                             <option value="asc">Ascending</option>
                         </select>
@@ -16925,6 +16925,8 @@
             const sortBy = document.getElementById('searchSortBy').value;
             const sortDir = document.getElementById('searchSortDir').value;
             
+            console.log('searchMaterials called with:', { query, sortBy, sortDir });
+            
             if (!authToken) {
                 showStatus('Please login first', 'error', 'searchMessage');
                 return;
@@ -16933,6 +16935,7 @@
             // Don't search on initial page load if no query and no existing results
             const searchResults = document.getElementById('searchResults');
             if (!query && (!searchResults.children || searchResults.children.length === 0)) {
+                console.log('Skipping search - no query and no existing results');
                 return;
             }
             
@@ -16940,12 +16943,16 @@
                 const url = query ? 
                     `${API_BASE}/materials/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}&sortDir=${sortDir}` :
                     `${API_BASE}/materials/search?sortBy=${sortBy}&sortDir=${sortDir}`;
+                
+                console.log('Search URL:', url);
                     
                 const response = await fetch(url, {
                     headers: {
                         'Authorization': `Bearer ${authToken}`
                     }
                 });
+                
+                console.log('Search response status:', response.status);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
