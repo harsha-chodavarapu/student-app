@@ -18806,7 +18806,11 @@
         // Function to show answers for a specific question
         async function showAnswersForQuestion(questionId, questionTitle) {
             try {
-                const response = await fetch(`${API_BASE}/askhub/questions/${questionId}`);
+                const response = await fetch(`${API_BASE}/askhub/questions/${questionId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch question details');
@@ -18900,6 +18904,9 @@
 
                 const response = await fetch(`${API_BASE}/askhub/questions`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
                     body: formData
                 });
 
@@ -18928,7 +18935,11 @@
 
         async function loadQuestions() {
             try {
-                const response = await fetch(`${API_BASE}/askhub/questions`);
+                const response = await fetch(`${API_BASE}/askhub/questions`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
                 const data = await response.json();
                 
                 const questionsList = document.getElementById('questionsList');
@@ -19010,6 +19021,9 @@
 
                 const response = await fetch(`${API_BASE}/askhub/questions/${questionId}/answers`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
                     body: formData
                 });
 
