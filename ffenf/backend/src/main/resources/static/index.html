@@ -16386,19 +16386,19 @@
                         <input type="text" id="searchQuery" placeholder="Search by title, subject, or course code">
                     </div>
                     <div class="form-group">
-                        <label for="searchSortBy">Sort By:</label>
-                        <select id="searchSortBy">
-                            <option value="createdAt">Created At</option>
-                            <option value="avgRating">Average Rating</option>
-                            <option value="downloadsCount">Downloads</option>
-                        </select>
+                        <label>Sort By:</label>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <button class="btn" onclick="setSortBy('createdAt')" style="background-color: #4CAF50;">Created At</button>
+                            <button class="btn" onclick="setSortBy('avgRating')" style="background-color: #2196F3;">Average Rating</button>
+                            <button class="btn" onclick="setSortBy('downloadsCount')" style="background-color: #FF9800;">Downloads</button>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="searchSortDir">Sort Direction:</label>
-                        <select id="searchSortDir">
-                            <option value="desc">Descending</option>
-                            <option value="asc">Ascending</option>
-                        </select>
+                        <label>Sort Direction:</label>
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <button class="btn" onclick="setSortDir('desc')" style="background-color: #9C27B0;">Descending</button>
+                            <button class="btn" onclick="setSortDir('asc')" style="background-color: #E91E63;">Ascending</button>
+                        </div>
                     </div>
                     <button class="btn" onclick="searchMaterials()">Search</button>
                     <button class="btn" onclick="triggerSort()" style="background-color: orange;">Test Sort</button>
@@ -16959,10 +16959,29 @@
             }
         });
 
+        // Global variables to track current sort settings
+        let currentSortBy = 'createdAt';
+        let currentSortDir = 'desc';
+
+        // Simple functions for sort buttons
+        function setSortBy(sortBy) {
+            console.log('Setting sort by:', sortBy);
+            alert('Sort By set to: ' + sortBy);
+            currentSortBy = sortBy;
+            searchMaterials();
+        }
+
+        function setSortDir(sortDir) {
+            console.log('Setting sort direction:', sortDir);
+            alert('Sort Direction set to: ' + sortDir);
+            currentSortDir = sortDir;
+            searchMaterials();
+        }
+
         async function searchMaterials() {
             const query = document.getElementById('searchQuery').value;
-            const sortBy = document.getElementById('searchSortBy').value;
-            const sortDir = document.getElementById('searchSortDir').value;
+            const sortBy = currentSortBy;
+            const sortDir = currentSortDir;
             
             console.log('searchMaterials called with:', { query, sortBy, sortDir });
             
