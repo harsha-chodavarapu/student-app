@@ -15519,6 +15519,15 @@
         .ask-section {
             display: block !important;
         }
+        
+        /* Prevent unwanted scrolling in AskHub */
+        #askhubContent {
+            scroll-behavior: auto;
+        }
+        
+        .askhub-main {
+            scroll-behavior: auto;
+        }
 
         .askhub-card {
             background: var(--bg-secondary);
@@ -18874,8 +18883,8 @@
                     // Insert answers section after the question card
                     questionCard.parentNode.insertBefore(answersSection, questionCard.nextSibling);
                     
-                    // Scroll to the answers section
-                    answersSection.scrollIntoView({ behavior: 'smooth' });
+                    // Don't auto-scroll - let user stay where they are
+                    // answersSection.scrollIntoView({ behavior: 'smooth' });
                 }
                 
             } catch (error) {
@@ -19011,8 +19020,8 @@
             // Select the option
             quickSelect.value = questionId;
             
-            // Focus on answer textarea
-            document.getElementById('quickAnswerContent').focus();
+            // Don't auto-focus to prevent scrolling
+            // document.getElementById('quickAnswerContent').focus();
         }
 
         async function quickAnswer() {
