@@ -91,7 +91,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return true;
         }
 
-        // Everything else, including /materials/upload, requires JWT
+        // Skip JWT for upload endpoints (they handle auth manually)
+        if (path.equals("/materials/upload") || path.equals("/materials/upload-new")) {
+            return true;
+        }
+
+        // Everything else requires JWT
         return false;
     }
 }
