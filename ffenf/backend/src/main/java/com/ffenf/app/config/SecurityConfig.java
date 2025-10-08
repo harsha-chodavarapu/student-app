@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -22,19 +23,22 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/index.html", "/static/**", "/assets/**").permitAll()
 				.requestMatchers("/auth/**").permitAll()
-				.requestMatchers("/health").permitAll()
-				.requestMatchers("/materials/search").permitAll()
+					.requestMatchers("/health").permitAll()
+					.requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                .requestMatchers("/materials/search").permitAll()
+                .requestMatchers("/materials/upload").authenticated()
 				.requestMatchers("/askhub/questions").permitAll()  // Allow reading questions without auth
 				.requestMatchers("/askhub/questions/{id}").permitAll()
 				.requestMatchers("/askhub/questions/search").permitAll()
 				.requestMatchers("/askhub/generate").permitAll()
-				.requestMatchers("/ai/**").permitAll()
-				.anyRequest().authenticated()
+                .requestMatchers("/ai/**").permitAll()
+                .anyRequest().permitAll()
 			)
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.httpBasic(Customizer.withDefaults());
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .httpBasic(AbstractHttpConfigurer::disable);
 		return http.build();
 	}
 

@@ -19,28 +19,97 @@ public class FileStorageService {
     private String storagePath;
 
     public String storeFile(MultipartFile file) throws IOException {
-        // Create storage directory if it doesn't exist
-        Path uploadDir = Paths.get(storagePath);
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+        // Enhanced file validation
+        if (file.isEmpty()) {
+            throw new IOException("File is empty");
+        }
+        
+        if (file.getSize() > 50 * 1024 * 1024) {
+            throw new IOException("File size exceeds 50MB limit");
         }
 
-        // Generate unique filename
+        // Try multiple storage locations for Railway compatibility
+        Path uploadDir = null;
+        String[] storagePaths = {
+            storagePath,
+            "/tmp/uploads",
+            System.getProperty("java.io.tmpdir") + "/uploads",
+            "/app/uploads"
+        };
+        
+        for (String path : storagePaths) {
+            try {
+                Path testDir = Paths.get(path);
+                if (!Files.exists(testDir)) {
+                    Files.createDirectories(testDir);
+                }
+                if (Files.isWritable(testDir)) {
+                    uploadDir = testDir;
+                    System.out.println("Using storage directory: " + uploadDir);
+                    break;
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to use storage path " + path + ": " + e.getMessage());
+                continue;
+            }
+        }
+        
+        if (uploadDir == null) {
+            throw new IOException("No writable storage directory found. Tried: " + String.join(", ", storagePaths));
+        }
+
+        // Generate unique filename with timestamp for better organization
         String originalFilename = file.getOriginalFilename();
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
-        String filename = UUID.randomUUID().toString() + extension;
+        String filename = System.currentTimeMillis() + "_" + UUID.randomUUID().toString() + extension;
 
-        // Store file
+        // Store file with enhanced error handling
         Path filePath = uploadDir.resolve(filename);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        try {
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File stored successfully: " + filePath);
+            
+            // Verify file was written correctly
+            if (!Files.exists(filePath) || Files.size(filePath) != file.getSize()) {
+                throw new IOException("File verification failed after write");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Failed to store file: " + e.getMessage());
+            // Clean up partial file if it exists
+            try {
+                if (Files.exists(filePath)) {
+                    Files.delete(filePath);
+                }
+            } catch (Exception cleanupException) {
+                System.err.println("Failed to cleanup partial file: " + cleanupException.getMessage());
+            }
+            throw new IOException("Failed to store file: " + e.getMessage(), e);
+        }
 
         return filename;
     }
 
     public Path getFilePath(String filename) {
+        // Search in all possible storage locations
+        String[] storagePaths = {
+            storagePath,
+            "/tmp/uploads",
+            System.getProperty("java.io.tmpdir") + "/uploads",
+            "/app/uploads"
+        };
+        
+        for (String path : storagePaths) {
+            Path filePath = Paths.get(path).resolve(filename);
+            if (Files.exists(filePath)) {
+                return filePath;
+            }
+        }
+        
+        // If not found anywhere, return the primary path (will cause 404)
         return Paths.get(storagePath).resolve(filename);
     }
 

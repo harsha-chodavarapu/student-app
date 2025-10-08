@@ -66,31 +66,65 @@ public class MaterialsController {
             @RequestParam(value = "tags", required = false) List<String> tags,
             Authentication auth) {
         try {
+            // Enhanced authentication check
+            if (auth == null || auth.getName() == null) {
+                System.err.println("Upload failed: Authentication is null or missing name");
+                return ResponseEntity.status(401).body(Map.of("error", "Unauthorized: missing or invalid token"));
+            }
+            
             String email = auth.getName();
             User currentUser = users.findByEmail(email).orElseThrow(() -> 
                 new RuntimeException("User not found: " + email));
 
             System.out.println("Upload request - File: " + file.getOriginalFilename() + ", Title: " + title + ", User: " + currentUser.getEmail());
             
-            // Upload PDF to OpenAI and get file ID
-            String openaiFileId = null;
-            if (file.getContentType() != null && file.getContentType().equals("application/pdf")) {
-                try {
-                    openaiFileId = openAiFileService.uploadPdfToOpenAI(file);
-                    System.out.println("PDF uploaded to OpenAI with file ID: " + openaiFileId);
-                } catch (Exception e) {
-                    System.err.println("Failed to upload PDF to OpenAI: " + e.getMessage());
-                    e.printStackTrace();
-                    return ResponseEntity.badRequest().body(Map.of("error", "Failed to upload PDF to OpenAI: " + e.getMessage()));
-                }
-            } else {
-                return ResponseEntity.badRequest().body(Map.of("error", "Only PDF files are supported"));
+            // Enhanced file validation
+            if (file.isEmpty()) {
+                System.err.println("Upload failed: File is empty");
+                return ResponseEntity.badRequest().body(Map.of("error", "File is empty"));
             }
             
-            // Store the file locally as backup
-            String storageKey = fileStorageService.storeFile(file);
-            System.out.println("File stored locally with key: " + storageKey);
+            String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "";
+            String contentType = file.getContentType();
+            boolean looksLikePdf = (contentType != null && contentType.equals("application/pdf")) || originalName.endsWith(".pdf");
 
+            if (!looksLikePdf) {
+                System.err.println("Upload failed: Invalid file type - " + contentType + ", filename: " + originalName);
+                return ResponseEntity.badRequest().body(Map.of("error", "Only PDF files are supported"));
+            }
+
+            // Check file size (50MB limit)
+            if (file.getSize() > 50 * 1024 * 1024) {
+                System.err.println("Upload failed: File too large - " + file.getSize() + " bytes");
+                return ResponseEntity.badRequest().body(Map.of("error", "File size exceeds 50MB limit"));
+            }
+
+            // Store the file locally first (more reliable than OpenAI)
+            String storageKey;
+            try {
+                storageKey = fileStorageService.storeFile(file);
+                System.out.println("File stored locally with key: " + storageKey);
+            } catch (Exception e) {
+                System.err.println("Failed to store file locally: " + e.getMessage());
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(Map.of(
+                    "error", "File storage failed",
+                    "message", "Unable to store file: " + e.getMessage()
+                ));
+            }
+            
+            // Upload PDF to OpenAI and get file ID (optional, don't fail if this fails)
+            String openaiFileId = null;
+            try {
+                openaiFileId = openAiFileService.uploadPdfToOpenAI(file);
+                System.out.println("PDF uploaded to OpenAI with file ID: " + openaiFileId);
+            } catch (Exception e) {
+                System.err.println("Failed to upload PDF to OpenAI (continuing without AI features): " + e.getMessage());
+                // Don't fail the entire upload if OpenAI fails
+                openaiFileId = "openai_failed_" + System.currentTimeMillis();
+            }
+
+            // Create and save material
             Material material = new Material();
             material.setUserId(currentUser.getId());
             material.setTitle(title);
@@ -103,21 +137,42 @@ public class MaterialsController {
             material.setStatus("uploaded");
             material.setTextExtract(openaiFileId); // Store OpenAI file ID instead of extracted text
 
-            Material savedMaterial = materials.save(material);
-            System.out.println("Material saved with ID: " + savedMaterial.getId());
+            Material savedMaterial;
+            try {
+                savedMaterial = materials.save(material);
+                System.out.println("Material saved with ID: " + savedMaterial.getId());
+            } catch (Exception e) {
+                System.err.println("Failed to save material to database: " + e.getMessage());
+                e.printStackTrace();
+                // Clean up stored file if database save fails
+                try {
+                    fileStorageService.deleteFile(storageKey);
+                } catch (Exception cleanupException) {
+                    System.err.println("Failed to cleanup file after database error: " + cleanupException.getMessage());
+                }
+                return ResponseEntity.status(500).body(Map.of(
+                    "error", "Database save failed",
+                    "message", "Unable to save material: " + e.getMessage()
+                ));
+            }
 
             // Reward user with a coin for uploading
-            currentUser.setCoins(currentUser.getCoins() + 1);
-            users.save(currentUser);
-            System.out.println("User rewarded 1 coin, new balance: " + currentUser.getCoins());
+            try {
+                currentUser.setCoins(currentUser.getCoins() + 1);
+                users.save(currentUser);
+                System.out.println("User rewarded 1 coin, new balance: " + currentUser.getCoins());
 
-            CoinTransaction coinTransaction = new CoinTransaction();
-            coinTransaction.setUserId(currentUser.getId());
-            coinTransaction.setDelta(1);
-            coinTransaction.setReason("upload_reward");
-            coinTransaction.setRefId(savedMaterial.getId());
-            coinTransactions.save(coinTransaction);
-            System.out.println("Coin transaction recorded");
+                CoinTransaction coinTransaction = new CoinTransaction();
+                coinTransaction.setUserId(currentUser.getId());
+                coinTransaction.setDelta(1);
+                coinTransaction.setReason("upload_reward");
+                coinTransaction.setRefId(savedMaterial.getId());
+                coinTransactions.save(coinTransaction);
+                System.out.println("Coin transaction recorded");
+            } catch (Exception e) {
+                System.err.println("Failed to reward user coins (upload still successful): " + e.getMessage());
+                // Don't fail the upload if coin reward fails
+            }
 
             return ResponseEntity.ok(savedMaterial);
         } catch (Exception e) {
@@ -125,7 +180,8 @@ public class MaterialsController {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of(
                 "error", "Upload failed",
-                "message", e.getMessage()
+                "message", e.getMessage(),
+                "details", e.getClass().getSimpleName()
             ));
         }
     }

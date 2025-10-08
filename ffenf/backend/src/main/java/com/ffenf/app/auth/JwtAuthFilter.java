@@ -60,14 +60,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 	
-	private boolean isPublicEndpoint(String path) {
-		return path.startsWith("/health") || 
-			   path.startsWith("/actuator/health") || 
-			   path.startsWith("/auth/register") || 
-			   path.startsWith("/auth/login") || 
-			   path.startsWith("/ai/") || 
-			   path.startsWith("/materials/");
-	}
+    private boolean isPublicEndpoint(String path) {
+        // Public health and auth endpoints
+        if (path.startsWith("/health") || path.startsWith("/actuator/health") ||
+            path.startsWith("/auth/register") || path.startsWith("/auth/login") ||
+            path.startsWith("/ai/")) {
+            return true;
+        }
+
+        // Allow public access to materials search and read-only GET endpoints
+        if (path.equals("/materials/search")) {
+            return true;
+        }
+        // Public GET of material metadata or file/download
+        if (path.startsWith("/materials/") &&
+            (path.endsWith("/file") || path.endsWith("/download") || path.matches("/materials/[a-f0-9\-]+$"))) {
+            return true;
+        }
+
+        // Everything else, including /materials/upload, requires JWT
+        return false;
+    }
 }
 
 
