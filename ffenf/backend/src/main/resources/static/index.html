@@ -16510,6 +16510,12 @@
                                 <div class="input-row">
                                     <input type="text" id="questionCourseCode" placeholder="Course (optional)" />
                                     <input type="text" id="questionSubject" placeholder="Subject (optional)" />
+                                    <select id="questionPriority" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white; min-width: 120px;">
+                                        <option value="NORMAL" style="background: #2c2c2c; color: white;">Normal Priority</option>
+                                        <option value="LOW" style="background: #2c2c2c; color: white;">Low Priority</option>
+                                        <option value="HIGH" style="background: #2c2c2c; color: white;">High Priority</option>
+                                        <option value="URGENT" style="background: #2c2c2c; color: white;">Urgent</option>
+                                    </select>
                                 </div>
                                 <button type="button" onclick="askQuestion()" class="askhub-btn ask-btn">
                                     Ask Question
@@ -18906,6 +18912,7 @@
             const description = document.getElementById('questionDescription').value.trim();
             const courseCode = document.getElementById('questionCourseCode').value.trim();
             const subject = document.getElementById('questionSubject').value.trim();
+            const priority = document.getElementById('questionPriority').value;
 
             if (!title || !description) {
                 showMessage('Please fill in both question title and description', 'error');
@@ -18923,7 +18930,7 @@
                 formData.append('description', description);
                 formData.append('courseCode', courseCode);
                 formData.append('subject', subject);
-                formData.append('priority', 'NORMAL');
+                formData.append('priority', priority);
 
                 const response = await fetch(`${API_BASE}/askhub/questions`, {
                     method: 'POST',
@@ -18941,6 +18948,7 @@
                     document.getElementById('questionDescription').value = '';
                     document.getElementById('questionCourseCode').value = '';
                     document.getElementById('questionSubject').value = '';
+                    document.getElementById('questionPriority').value = 'NORMAL';
                     
                     // Reload questions
                     loadQuestions();
