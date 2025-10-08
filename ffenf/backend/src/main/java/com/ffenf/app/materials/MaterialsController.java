@@ -259,10 +259,15 @@ public class MaterialsController {
             
             // Create dynamic sorting based on parameters
             Sort sort;
+            
+            // Validate and map sortBy field names
+            String validSortBy = validateSortField(sortBy);
+            System.out.println("Original sortBy: " + sortBy + ", Validated sortBy: " + validSortBy);
+            
             if ("desc".equalsIgnoreCase(sortDir)) {
-                sort = Sort.by(sortBy).descending();
+                sort = Sort.by(validSortBy).descending();
             } else {
-                sort = Sort.by(sortBy).ascending();
+                sort = Sort.by(validSortBy).ascending();
             }
             
             // Add secondary sort by createdAt for consistency
@@ -431,6 +436,29 @@ public class MaterialsController {
 
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    private String validateSortField(String sortBy) {
+        // Map frontend field names to actual entity field names
+        switch (sortBy) {
+            case "avgRating":
+                return "avgRating";
+            case "downloadsCount":
+                return "downloadsCount";
+            case "createdAt":
+                return "createdAt";
+            case "title":
+                return "title";
+            case "subject":
+                return "subject";
+            case "courseCode":
+                return "courseCode";
+            case "ratingsCount":
+                return "ratingsCount";
+            default:
+                System.out.println("Invalid sort field: " + sortBy + ", defaulting to avgRating");
+                return "avgRating";
         }
     }
 }
