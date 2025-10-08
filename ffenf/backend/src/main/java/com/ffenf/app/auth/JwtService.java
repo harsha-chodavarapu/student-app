@@ -23,6 +23,8 @@ public class JwtService {
 
 	private javax.crypto.SecretKey getSigningKey() {
 		System.out.println("JwtService - secretBase64: " + (secretBase64 != null ? secretBase64.substring(0, Math.min(10, secretBase64.length())) + "..." : "NULL"));
+		System.out.println("JwtService - Environment APP_JWT_SECRET: " + System.getenv("APP_JWT_SECRET"));
+		System.out.println("JwtService - Environment app.jwt.secret: " + System.getProperty("app.jwt.secret"));
 		if (secretBase64 == null) {
 			throw new IllegalStateException("JWT secret is null! Check APP_JWT_SECRET environment variable.");
 		}
