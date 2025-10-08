@@ -16392,10 +16392,10 @@
                             <button class="btn" onclick="toggleSortByOptions()" id="sortByButton" style="background-color: #2196F3; min-width: 120px;">
                                 Created At ▼
                             </button>
-                            <div id="sortByOptions" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000; min-width: 120px;">
-                                <div onclick="selectSortBy('createdAt')" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;">Created At</div>
-                                <div onclick="selectSortBy('avgRating')" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;">Average Rating</div>
-                                <div onclick="selectSortBy('downloadsCount')" style="padding: 8px 12px; cursor: pointer;">Downloads</div>
+                            <div id="sortByOptions" style="display: none; position: absolute; top: 100%; left: 0; background: #2c2c2c; border: 2px solid #9C27B0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 140px; margin-top: 5px;">
+                                <div onclick="selectSortBy('createdAt')" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #555; color: white; background: #3c3c3c; border-radius: 6px 6px 0 0; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Created At</div>
+                                <div onclick="selectSortBy('avgRating')" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #555; color: white; background: #3c3c3c; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Average Rating</div>
+                                <div onclick="selectSortBy('downloadsCount')" style="padding: 12px 16px; cursor: pointer; color: white; background: #3c3c3c; border-radius: 0 0 6px 6px; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Downloads</div>
                             </div>
                         </div>
                     </div>
@@ -16406,9 +16406,9 @@
                             <button class="btn" onclick="toggleSortDirOptions()" id="sortDirButton" style="background-color: #9C27B0; min-width: 120px;">
                                 Descending ▼
                             </button>
-                            <div id="sortDirOptions" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000; min-width: 120px;">
-                                <div onclick="selectSortDir('desc')" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;">Descending</div>
-                                <div onclick="selectSortDir('asc')" style="padding: 8px 12px; cursor: pointer;">Ascending</div>
+                            <div id="sortDirOptions" style="display: none; position: absolute; top: 100%; left: 0; background: #2c2c2c; border: 2px solid #9C27B0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 140px; margin-top: 5px;">
+                                <div onclick="selectSortDir('desc')" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #555; color: white; background: #3c3c3c; border-radius: 6px 6px 0 0; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Descending</div>
+                                <div onclick="selectSortDir('asc')" style="padding: 12px 16px; cursor: pointer; color: white; background: #3c3c3c; border-radius: 0 0 6px 6px; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Ascending</div>
                             </div>
                         </div>
                     </div>
