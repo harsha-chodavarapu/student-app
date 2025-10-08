@@ -15515,6 +15515,10 @@
             gap: 24px;
             padding: 20px 0;
         }
+        
+        .ask-section {
+            display: block !important;
+        }
 
         .askhub-card {
             background: var(--bg-secondary);
@@ -16854,6 +16858,16 @@
 
         function showAskHub() {
             updateNavigation('askhub');
+            
+            // Ensure ask-section is visible
+            const askSection = document.querySelector('.ask-section');
+            if (askSection) {
+                askSection.style.display = 'block';
+                console.log('Ask section is visible');
+            } else {
+                console.log('Ask section not found');
+            }
+            
             loadQuestions();
         }
 
