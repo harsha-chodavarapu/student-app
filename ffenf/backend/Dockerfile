@@ -9,6 +9,9 @@ COPY pom.xml pom.xml
 COPY src src
 # Ensure wrapper is executable and build without running tests
 RUN chmod +x mvnw && ./mvnw -q -DskipTests -Dmaven.test.skip=true clean package
+# Verify static files are included
+RUN ls -la target/classes/static/ || echo "No static directory found"
+RUN find target/classes -name "*.html" -exec echo "Found HTML: {}" \;
 
 # ---- Runtime stage (JRE 21)
 FROM eclipse-temurin:21-jre

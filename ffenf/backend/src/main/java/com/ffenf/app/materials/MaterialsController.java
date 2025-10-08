@@ -60,6 +60,15 @@ public class MaterialsController {
 
     public record SearchRequest(String q, String subject, String courseCode, int page, int size) {}
 
+    @GetMapping("/test-static")
+    public ResponseEntity<?> testStatic() {
+        return ResponseEntity.ok(Map.of(
+            "message", "Static files test endpoint working",
+            "timestamp", System.currentTimeMillis(),
+            "uploadEndpoint", "/materials/upload-new"
+        ));
+    }
+
 
     @PostMapping("/upload-new")
     public ResponseEntity<?> uploadMaterialNew(
