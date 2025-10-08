@@ -94,10 +94,14 @@ public class MaterialsController {
         
         System.out.println("=== UPLOAD METHOD CALLED - VERSION 3.0 - NO AUTH PARAMETER ===");
         
+        // Debug JWT token
+        String authHeader = request.getHeader("Authorization");
+        System.out.println("Authorization header: " + (authHeader != null ? authHeader.substring(0, Math.min(20, authHeader.length())) + "..." : "NULL"));
+        
         try {
             // Simple authentication check
-            String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                System.out.println("No valid Bearer token found");
                 return ResponseEntity.status(401).body(Map.of("error", "Please log in to upload files"));
             }
             
