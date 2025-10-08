@@ -260,18 +260,25 @@ public class MaterialsController {
             // Create dynamic sorting based on parameters
             Sort sort;
             
-            // Validate and map sortBy field names
-            String validSortBy = validateSortField(sortBy);
-            System.out.println("Original sortBy: " + sortBy + ", Validated sortBy: " + validSortBy);
-            
-            if ("desc".equalsIgnoreCase(sortDir)) {
-                sort = Sort.by(validSortBy).descending();
-            } else {
-                sort = Sort.by(validSortBy).ascending();
+            try {
+                // Validate and map sortBy field names
+                String validSortBy = validateSortField(sortBy);
+                System.out.println("Original sortBy: " + sortBy + ", Validated sortBy: " + validSortBy);
+                
+                if ("desc".equalsIgnoreCase(sortDir)) {
+                    sort = Sort.by(validSortBy).descending();
+                } else {
+                    sort = Sort.by(validSortBy).ascending();
+                }
+                
+                // Add secondary sort by createdAt for consistency
+                sort = sort.and(Sort.by("createdAt").descending());
+                
+            } catch (Exception e) {
+                System.err.println("Error creating sort: " + e.getMessage());
+                // Fallback to default sorting
+                sort = Sort.by("avgRating").descending().and(Sort.by("createdAt").descending());
             }
-            
-            // Add secondary sort by createdAt for consistency
-            sort = sort.and(Sort.by("createdAt").descending());
             
             Pageable pageable = PageRequest.of(page, size, sort);
             

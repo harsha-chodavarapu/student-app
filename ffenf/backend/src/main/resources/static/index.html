@@ -16387,7 +16387,7 @@
                     </div>
                     <div class="form-group">
                         <label for="searchSortBy">Sort By:</label>
-                        <select id="searchSortBy" onchange="console.log('Sort By changed to:', this.value); searchMaterials();">
+                        <select id="searchSortBy" onchange="handleSortChange()">
                             <option value="createdAt">Created At</option>
                             <option value="avgRating">Average Rating</option>
                             <option value="downloadsCount">Downloads</option>
@@ -16395,7 +16395,7 @@
                     </div>
                     <div class="form-group">
                         <label for="searchSortDir">Sort Direction:</label>
-                        <select id="searchSortDir" onchange="console.log('Sort Direction changed to:', this.value); searchMaterials();">
+                        <select id="searchSortDir" onchange="handleSortChange()">
                             <option value="desc">Descending</option>
                             <option value="asc">Ascending</option>
                         </select>
@@ -16920,6 +16920,17 @@
             }
         }
 
+        // Global variable to track if we have performed an initial search
+        let hasPerformedInitialSearch = false;
+
+        function handleSortChange() {
+            console.log('Sort option changed');
+            // Only trigger search if we have already performed an initial search
+            if (hasPerformedInitialSearch) {
+                searchMaterials();
+            }
+        }
+
         async function searchMaterials() {
             const query = document.getElementById('searchQuery').value;
             const sortBy = document.getElementById('searchSortBy').value;
@@ -16931,9 +16942,6 @@
                 showStatus('Please login first', 'error', 'searchMessage');
                 return;
             }
-            
-            // Always search when sort options change, even if no query
-            // This ensures sorting works even when just browsing all materials
             
             try {
                 // Show loading indicator
@@ -16963,7 +16971,12 @@
                 console.log('Search response data:', data);
                 displayMaterials(data.materials, 'searchResults');
                 showStatus(`Found ${data.materials.length} materials (sorted by ${sortBy} ${sortDir})`, 'success', 'searchMessage');
+                
+                // Mark that we have performed an initial search
+                hasPerformedInitialSearch = true;
+                
             } catch (error) {
+                console.error('Search error:', error);
                 showStatus('Network error: ' + error.message, 'error', 'searchMessage');
             }
         }
