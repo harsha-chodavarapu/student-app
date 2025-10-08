@@ -68,61 +68,33 @@ public class MaterialsController {
             @RequestParam(value = "subject", required = false) String subject,
             @RequestParam(value = "courseCode", required = false) String courseCode,
             @RequestParam(value = "tags", required = false) List<String> tags,
-            Authentication auth,
             HttpServletRequest request) {
         
-        System.out.println("=== UPLOAD METHOD CALLED ===");
-        System.out.println("=== UPLOAD DEBUG START ===");
-        System.out.println("Request URI: " + request.getRequestURI());
-        System.out.println("Request Method: " + request.getMethod());
-        System.out.println("Auth Header: " + request.getHeader("Authorization"));
-        System.out.println("Auth: " + (auth != null ? auth.getName() : "NULL"));
-        System.out.println("File: " + (file != null ? file.getOriginalFilename() : "NULL"));
-        System.out.println("Title: " + title);
-        System.out.println("File size: " + (file != null ? file.getSize() : "NULL"));
-        System.out.println("Content type: " + (file != null ? file.getContentType() : "NULL"));
+        System.out.println("=== UPLOAD METHOD CALLED - SIMPLIFIED ===");
         
         try {
-            // Manual JWT token validation since Spring Security seems to be bypassed
+            // Simple authentication check
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                System.err.println("Upload failed: No Authorization header or invalid format");
-                return ResponseEntity.status(401).body(Map.of(
-                    "error", "Authentication required", 
-                    "message", "Please log in to upload files",
-                    "details", "No Authorization header found"
-                ));
+                return ResponseEntity.status(401).body(Map.of("error", "Please log in to upload files"));
             }
             
             String token = authHeader.substring(7);
             String email;
             try {
-                // Use JWT service directly since Spring Security isn't working
                 com.ffenf.app.auth.JwtService jwtService = new com.ffenf.app.auth.JwtService();
                 io.jsonwebtoken.Claims claims = jwtService.parse(token);
                 email = claims.getSubject();
-                System.out.println("Manual JWT parsing successful - email: " + email);
             } catch (Exception e) {
-                System.err.println("Manual JWT parsing failed: " + e.getMessage());
-                return ResponseEntity.status(401).body(Map.of(
-                    "error", "Invalid token", 
-                    "message", "Authentication token is invalid",
-                    "details", e.getMessage()
-                ));
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid login token"));
             }
             
             if (email == null) {
-                System.err.println("Upload failed: JWT token has no subject");
-                return ResponseEntity.status(401).body(Map.of(
-                    "error", "Invalid token", 
-                    "message", "Authentication token is invalid",
-                    "details", "No user email in token"
-                ));
+                return ResponseEntity.status(401).body(Map.of("error", "Invalid login token"));
             }
             
-            final String finalEmail = email;
-            User currentUser = users.findByEmail(finalEmail).orElseThrow(() -> 
-                new RuntimeException("User not found: " + finalEmail));
+            User currentUser = users.findByEmail(email).orElseThrow(() -> 
+                new RuntimeException("User not found: " + email));
 
             System.out.println("Upload request - File: " + file.getOriginalFilename() + ", Title: " + title + ", User: " + currentUser.getEmail());
             

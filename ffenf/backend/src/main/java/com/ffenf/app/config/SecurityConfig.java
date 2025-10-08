@@ -30,8 +30,7 @@ public class SecurityConfig {
 					.requestMatchers("/health").permitAll()
 					.requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/materials/search").permitAll()
-                .requestMatchers("/materials/upload").authenticated()
-                .requestMatchers("/materials/upload/test").authenticated()
+                .requestMatchers("/materials/upload").permitAll()
 				.requestMatchers("/askhub/questions").permitAll()  // Allow reading questions without auth
 				.requestMatchers("/askhub/questions/{id}").permitAll()
 				.requestMatchers("/askhub/questions/search").permitAll()
