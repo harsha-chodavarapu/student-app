@@ -16562,6 +16562,19 @@
                                 <div class="simple-textarea">
                                     <textarea id="quickAnswerContent" placeholder="Write your answer here..." rows="6"></textarea>
                                 </div>
+                                <div class="answer-options" style="margin: 15px 0;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Show as:</label>
+                                    <div style="display: flex; gap: 15px; align-items: center;">
+                                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                            <input type="radio" name="answerVisibility" value="anonymous" checked style="margin: 0;">
+                                            <span>Anonymous</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                            <input type="radio" name="answerVisibility" value="name" style="margin: 0;">
+                                            <span>My Name</span>
+                                        </label>
+                                    </div>
+                                </div>
                                 <button type="button" onclick="quickAnswer()" class="askhub-btn answer-btn">
                                     Submit Answer
                                 </button>
@@ -18884,19 +18897,33 @@
                                 <div class="answer-item">
                                     <div class="answer-content">${answer.content}</div>
                                     <div class="answer-meta">
-                                        <span class="answer-author">Answered by: ${answer.authorEmail || 'Anonymous'}</span>
+                                        <span class="answer-author">Answered by: ${answer.authorName || 'Anonymous'}</span>
                                         <span class="answer-time">${formatTimeAgo(answer.createdAt)}</span>
                                     </div>
                                 </div>
                             `).join('')
                         }
-                        ${answers.length > 0 ? `
-                            <div class="ask-for-answer" style="margin-top: 20px;">
-                                <button class="answer-quick-btn" onclick="selectQuestionForQuickAnswer('${questionId}', '${questionTitle}')">
-                                    Add Your Answer
+                        <div class="ask-for-answer" style="margin-top: 20px;">
+                            <div class="answer-form-inline">
+                                <textarea id="inlineAnswerContent" placeholder="Write your answer here..." rows="4" style="width: 100%; margin-bottom: 15px; padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
+                                <div class="answer-options" style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Show as:</label>
+                                    <div style="display: flex; gap: 15px; align-items: center;">
+                                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                            <input type="radio" name="inlineAnswerVisibility" value="anonymous" checked style="margin: 0;">
+                                            <span>Anonymous</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                            <input type="radio" name="inlineAnswerVisibility" value="name" style="margin: 0;">
+                                            <span>My Name</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button class="answer-quick-btn" onclick="submitInlineAnswer('${questionId}')">
+                                    Submit Answer
                                 </button>
                             </div>
-                        ` : ''}
+                        </div>
                     </div>
                 `;
                 
@@ -19053,6 +19080,7 @@
         async function quickAnswer() {
             const questionId = document.getElementById('quickQuestionSelect').value;
             const content = document.getElementById('quickAnswerContent').value.trim();
+            const visibility = document.querySelector('input[name="answerVisibility"]:checked').value;
 
             if (!questionId || !content) {
                 showMessage('Please select a question and write an answer', 'error');
@@ -19067,6 +19095,23 @@
             try {
                 const formData = new FormData();
                 formData.append('content', content);
+                
+                // Get current user info for display name
+                let displayName = 'Anonymous';
+                if (visibility === 'name') {
+                    try {
+                        const profileResponse = await fetch(`${API_BASE}/profile/me`, {
+                            headers: { 'Authorization': `Bearer ${authToken}` }
+                        });
+                        if (profileResponse.ok) {
+                            const profile = await profileResponse.json();
+                            displayName = profile.name || profile.email || 'User';
+                        }
+                    } catch (e) {
+                        console.log('Could not get user name, using Anonymous');
+                    }
+                }
+                formData.append('displayName', displayName);
 
                 const response = await fetch(`${API_BASE}/askhub/questions/${questionId}/answers`, {
                     method: 'POST',
@@ -19082,6 +19127,7 @@
                     // Clear form
                     document.getElementById('quickAnswerContent').value = '';
                     document.getElementById('quickQuestionSelect').value = '';
+                    document.querySelector('input[name="answerVisibility"][value="anonymous"]').checked = true;
                     
                     // Reload questions
                     loadQuestions();
@@ -19094,6 +19140,62 @@
             } finally {
                 answerBtn.textContent = originalText;
                 answerBtn.disabled = false;
+            }
+        }
+
+        async function submitInlineAnswer(questionId) {
+            const content = document.getElementById('inlineAnswerContent').value.trim();
+            const visibility = document.querySelector('input[name="inlineAnswerVisibility"]:checked').value;
+
+            if (!content) {
+                showMessage('Please write an answer', 'error');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('content', content);
+                
+                // Get current user info for display name
+                let displayName = 'Anonymous';
+                if (visibility === 'name') {
+                    try {
+                        const profileResponse = await fetch(`${API_BASE}/profile/me`, {
+                            headers: { 'Authorization': `Bearer ${authToken}` }
+                        });
+                        if (profileResponse.ok) {
+                            const profile = await profileResponse.json();
+                            displayName = profile.name || profile.email || 'User';
+                        }
+                    } catch (e) {
+                        console.log('Could not get user name, using Anonymous');
+                    }
+                }
+                formData.append('displayName', displayName);
+
+                const response = await fetch(`${API_BASE}/askhub/questions/${questionId}/answers`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showMessage('Answer submitted successfully!', 'success');
+                    
+                    // Clear form
+                    document.getElementById('inlineAnswerContent').value = '';
+                    document.querySelector('input[name="inlineAnswerVisibility"][value="anonymous"]').checked = true;
+                    
+                    // Reload answers for this question
+                    showAnswersForQuestion(questionId, 'Current Question');
+                } else {
+                    throw new Error('Failed to submit answer');
+                }
+            } catch (error) {
+                console.error('Error submitting answer:', error);
+                showMessage('Failed to submit answer. Please try again.', 'error');
             }
         }
 

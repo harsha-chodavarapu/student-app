@@ -154,12 +154,33 @@ public class AskHubController {
 		question.setViewsCount(question.getViewsCount() + 1);
 		questionRepository.save(question);
 		
-		// Get answers
+		// Get answers with user information
 		List<Answer> answers = answerRepository.findByQuestionIdOrderByVotes(id);
+		List<Map<String, Object>> answersWithUsers = answers.stream().map(answer -> {
+			Map<String, Object> answerMap = new HashMap<>();
+			answerMap.put("id", answer.getId());
+			answerMap.put("content", answer.getContent());
+			answerMap.put("createdAt", answer.getCreatedAt());
+			answerMap.put("votesUp", answer.getVotesUp());
+			answerMap.put("votesDown", answer.getVotesDown());
+			answerMap.put("isAccepted", answer.isAccepted());
+			
+			// Get user information
+			User user = userRepository.findById(answer.getUserId()).orElse(null);
+			if (user != null) {
+				answerMap.put("authorName", user.getName());
+				answerMap.put("authorEmail", user.getEmail());
+			} else {
+				answerMap.put("authorName", "Unknown User");
+				answerMap.put("authorEmail", "unknown@example.com");
+			}
+			
+			return answerMap;
+		}).toList();
 		
 		Map<String, Object> response = new HashMap<>();
 		response.put("question", question);
-		response.put("answers", answers);
+		response.put("answers", answersWithUsers);
 		
 		return ResponseEntity.ok(response);
 	}
@@ -191,10 +212,11 @@ public class AskHubController {
 
 	// Answer endpoints
 	@PostMapping(path = "/questions/{questionId}/answers", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<Answer> createAnswer(
+	public ResponseEntity<Map<String, Object>> createAnswer(
 			@PathVariable UUID questionId,
 			@RequestParam("content") String content,
 			@RequestParam(value = "image", required = false) MultipartFile image,
+			@RequestParam(value = "displayName", defaultValue = "Anonymous") String displayName,
 			HttpServletRequest request) {
 		
 		try {
@@ -231,7 +253,14 @@ public class AskHubController {
 			question.setAnswersCount(question.getAnswersCount() + 1);
 			questionRepository.save(question);
 			
-			return ResponseEntity.status(HttpStatus.CREATED).body(savedAnswer);
+			// Return answer with display name
+			Map<String, Object> response = new HashMap<>();
+			response.put("id", savedAnswer.getId());
+			response.put("content", savedAnswer.getContent());
+			response.put("createdAt", savedAnswer.getCreatedAt());
+			response.put("authorName", displayName);
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 			
 		} catch (Exception e) {
 			System.err.println("Error creating answer: " + e.getMessage());
