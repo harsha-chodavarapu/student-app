@@ -61,8 +61,8 @@ public class MaterialsController {
     public record SearchRequest(String q, String subject, String courseCode, int page, int size) {}
 
 
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadMaterial(
+    @PostMapping("/upload-new")
+    public ResponseEntity<?> uploadMaterialNew(
             @RequestParam("file") MultipartFile file,
             @RequestParam("title") String title,
             @RequestParam(value = "subject", required = false) String subject,
@@ -70,7 +70,7 @@ public class MaterialsController {
             @RequestParam(value = "tags", required = false) List<String> tags,
             HttpServletRequest request) {
         
-        System.out.println("=== UPLOAD METHOD CALLED - SIMPLIFIED - VERSION 2.0 ===");
+        System.out.println("=== NEW UPLOAD METHOD CALLED - NO SPRING SECURITY ===");
         
         try {
             // Simple authentication check
