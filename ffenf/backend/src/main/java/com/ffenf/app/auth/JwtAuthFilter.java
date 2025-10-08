@@ -97,6 +97,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return true;
         }
 
+        // Skip JWT for root path (static file serving)
+        if (path.equals("/") || path.equals("/index.html")) {
+            return true;
+        }
+
         // Everything else requires JWT
         return false;
     }
