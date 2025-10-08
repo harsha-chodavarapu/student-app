@@ -16388,22 +16388,23 @@
                     
                     <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
                         <label for="searchSortBy">Sort By:</label>
-                        <select id="searchSortBy" onchange="handleSortChange()" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px;">
-                            <option value="createdAt">Created At</option>
-                            <option value="avgRating">Average Rating</option>
-                            <option value="downloadsCount">Downloads</option>
+                        <select id="searchSortBy" onchange="handleSortChange()" onclick="console.log('Sort By clicked')" style="padding: 8px 12px; border-radius: 4px; border: 2px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px; font-size: 14px;">
+                            <option value="createdAt" style="background: #2c2c2c; color: white;">Created At</option>
+                            <option value="avgRating" style="background: #2c2c2c; color: white;">Average Rating</option>
+                            <option value="downloadsCount" style="background: #2c2c2c; color: white;">Downloads</option>
                         </select>
                     </div>
                     
                     <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
                         <label for="searchSortDir">Sort Direction:</label>
-                        <select id="searchSortDir" onchange="handleSortChange()" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px;">
-                            <option value="desc">Descending</option>
-                            <option value="asc">Ascending</option>
+                        <select id="searchSortDir" onchange="handleSortChange()" onclick="console.log('Sort Direction clicked')" style="padding: 8px 12px; border-radius: 4px; border: 2px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px; font-size: 14px;">
+                            <option value="desc" style="background: #2c2c2c; color: white;">Descending</option>
+                            <option value="asc" style="background: #2c2c2c; color: white;">Ascending</option>
                         </select>
                     </div>
                     
                     <button class="btn" onclick="searchMaterials()">Search</button>
+                    <button class="btn" onclick="testDropdowns()" style="background-color: orange;">Test Dropdowns</button>
                 </div>
                 <div id="searchMessage" class="status-message"></div>
                 <div id="searchResults" class="material-grid"></div>
@@ -16965,6 +16966,14 @@
         function handleSortChange() {
             console.log('Sort option changed');
             searchMaterials();
+        }
+
+        // Test function to verify dropdowns are working
+        function testDropdowns() {
+            const sortBy = document.getElementById('searchSortBy').value;
+            const sortDir = document.getElementById('searchSortDir').value;
+            alert('Current values:\nSort By: ' + sortBy + '\nSort Direction: ' + sortDir);
+            console.log('Dropdown test - Sort By:', sortBy, 'Sort Direction:', sortDir);
         }
 
         async function searchMaterials() {
