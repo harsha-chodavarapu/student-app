@@ -16813,13 +16813,34 @@
                 // Update dashboard welcome message
                 const welcomeName = document.getElementById('welcomeName');
                 if (welcomeName) {
-                    welcomeName.textContent = profile.name || 'User';
+                    welcomeName.textContent = `Welcome, ${profile.name || 'Student'}!`;
+                }
+                
+                const welcomeEmail = document.getElementById('welcomeEmail');
+                if (welcomeEmail) {
+                    welcomeEmail.textContent = profile.email || 'Ready to learn!';
                 }
                 
                 // Update coin balance
                 const coinBalance = document.getElementById('coinBalance');
                 if (coinBalance) {
                     coinBalance.textContent = profile.coins || 0;
+                }
+                
+                // Update dashboard stats
+                const userCoins = document.getElementById('userCoins');
+                if (userCoins) {
+                    userCoins.textContent = profile.coins || 0;
+                }
+                
+                const userUploads = document.getElementById('userUploads');
+                if (userUploads) {
+                    userUploads.textContent = profile.uploadsCount || 0;
+                }
+                
+                const userReviews = document.getElementById('userReviews');
+                if (userReviews) {
+                    userReviews.textContent = profile.reviewsCount || 0;
                 }
                 
             } catch (error) {
@@ -16918,47 +16939,6 @@
         }
 
 
-        async function fetchProfile() {
-            try {
-                // Try profile endpoint first
-                const profileResponse = await fetch(`${API_BASE}/profile/me`, {
-                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
-                });
-
-                if (profileResponse.ok) {
-                    const user = await profileResponse.json();
-                    currentUser = user;
-                    document.getElementById('welcomeName').textContent = `Welcome, ${user.name || 'Student'}!`;
-                    document.getElementById('welcomeEmail').textContent = user.email || 'Ready to learn!';
-                    document.getElementById('userCoins').textContent = user.coins || 0;
-                    document.getElementById('userUploads').textContent = user.uploadsCount || 0;
-                    document.getElementById('userReviews').textContent = user.reviewsCount || 0;
-                    return;
-                }
-
-                // If profile fails, try stats endpoint for testing mode
-                const statsResponse = await fetch(`${API_BASE}/profile/stats`, {
-                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
-                });
-
-                if (statsResponse.ok) {
-                    const stats = await statsResponse.json();
-                    document.getElementById('welcomeName').textContent = 'Welcome, Student!';
-                    document.getElementById('welcomeEmail').textContent = 'Ready to explore materials!';
-                    document.getElementById('userCoins').textContent = stats.coins ?? 0;
-                    document.getElementById('userUploads').textContent = stats.totalUploads ?? 0;
-                    document.getElementById('userReviews').textContent = stats.totalReviews ?? 0;
-                }
-            } catch (error) {
-                console.error('Failed to load user profile:', error);
-                // Default values if everything fails
-                document.getElementById('welcomeName').textContent = 'Welcome!';
-                document.getElementById('welcomeEmail').textContent = 'Ready to explore!';
-                document.getElementById('userCoins').textContent = '0';
-                document.getElementById('userUploads').textContent = '0';
-                document.getElementById('userReviews').textContent = '0';
-            }
-        }
 
         async function fetchRecentMaterials() {
             if (!authToken) {
