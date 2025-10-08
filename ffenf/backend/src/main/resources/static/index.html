@@ -16932,17 +16932,16 @@
                 return;
             }
             
-            // Don't search on initial page load if no query and no existing results
-            const searchResults = document.getElementById('searchResults');
-            if (!query && (!searchResults.children || searchResults.children.length === 0)) {
-                console.log('Skipping search - no query and no existing results');
-                return;
-            }
+            // Always search when sort options change, even if no query
+            // This ensures sorting works even when just browsing all materials
             
             try {
+                // Show loading indicator
+                showStatus('Searching...', 'info', 'searchMessage');
+                
                 const url = query ? 
-                    `${API_BASE}/materials/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}&sortDir=${sortDir}` :
-                    `${API_BASE}/materials/search?sortBy=${sortBy}&sortDir=${sortDir}`;
+                    `${API_BASE}/materials/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}&sortDir=${sortDir}&t=${Date.now()}` :
+                    `${API_BASE}/materials/search?sortBy=${sortBy}&sortDir=${sortDir}&t=${Date.now()}`;
                 
                 console.log('Search URL:', url);
                     
@@ -16963,7 +16962,7 @@
                 const data = await response.json();
                 console.log('Search response data:', data);
                 displayMaterials(data.materials, 'searchResults');
-                showStatus(`Found ${data.materials.length} materials`, 'success', 'searchMessage');
+                showStatus(`Found ${data.materials.length} materials (sorted by ${sortBy} ${sortDir})`, 'success', 'searchMessage');
             } catch (error) {
                 showStatus('Network error: ' + error.message, 'error', 'searchMessage');
             }
