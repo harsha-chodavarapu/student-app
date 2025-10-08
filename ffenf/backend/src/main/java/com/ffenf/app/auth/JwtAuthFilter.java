@@ -43,6 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			return;
 		}
 		
+		// Only process JWT for protected endpoints
 		String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 		System.out.println("JWT Filter - Authorization header: " + (header != null ? "Present" : "Missing"));
 		
@@ -67,7 +68,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 				SecurityContextHolder.clearContext();
 			}
 		} else {
-			System.err.println("JWT Filter - No valid Bearer token found");
+			System.err.println("JWT Filter - No valid Bearer token found for protected endpoint: " + path);
 			SecurityContextHolder.clearContext();
 		}
 		filterChain.doFilter(request, response);

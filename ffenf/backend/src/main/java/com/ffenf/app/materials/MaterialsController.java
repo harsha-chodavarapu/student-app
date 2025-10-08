@@ -97,11 +97,12 @@ public class MaterialsController {
         // Debug JWT token
         String authHeader = request.getHeader("Authorization");
         System.out.println("Authorization header: " + (authHeader != null ? authHeader.substring(0, Math.min(20, authHeader.length())) + "..." : "NULL"));
+        System.out.println("Header starts with Bearer: " + (authHeader != null && authHeader.startsWith("Bearer ")));
         
         try {
             // Simple authentication check
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                System.out.println("No valid Bearer token found");
+                System.out.println("No valid Bearer token found - Header: " + authHeader);
                 return ResponseEntity.status(401).body(Map.of("error", "Please log in to upload files"));
             }
             
