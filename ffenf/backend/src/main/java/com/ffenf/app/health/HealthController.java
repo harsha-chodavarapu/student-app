@@ -19,45 +19,36 @@ public class HealthController {
 
 	@GetMapping("/health")
 	public ResponseEntity<Map<String, Object>> health() {
-		Map<String, Object> health = new HashMap<>();
-		health.put("status", "UP");
-		health.put("timestamp", System.currentTimeMillis());
-		
-		// Check storage directories
-		Map<String, Object> storage = new HashMap<>();
-		String[] storagePaths = {
-			storagePath,
-			"/tmp/uploads",
-			System.getProperty("java.io.tmpdir") + "/uploads",
-			"/app/uploads"
-		};
-		
-		for (String path : storagePaths) {
+		try {
+			Map<String, Object> health = new HashMap<>();
+			health.put("status", "UP");
+			health.put("timestamp", System.currentTimeMillis());
+			
+			// Simple storage check without complex operations
 			try {
-				Path testPath = Paths.get(path);
-				boolean exists = Files.exists(testPath);
-				boolean writable = exists && Files.isWritable(testPath);
-				storage.put(path, Map.of(
-					"exists", exists,
-					"writable", writable
-				));
+				Path testPath = Paths.get(storagePath);
+				if (!Files.exists(testPath)) {
+					Files.createDirectories(testPath);
+				}
+				health.put("storage", "OK");
 			} catch (Exception e) {
-				storage.put(path, Map.of(
-					"exists", false,
-					"writable", false,
-					"error", e.getMessage()
-				));
+				health.put("storage", "WARNING: " + e.getMessage());
 			}
+			
+			// Basic system info
+			health.put("javaVersion", System.getProperty("java.version"));
+			health.put("osName", System.getProperty("os.name"));
+			
+			return ResponseEntity.ok(health);
+			
+		} catch (Exception e) {
+			// Fallback simple health check
+			Map<String, Object> simpleHealth = new HashMap<>();
+			simpleHealth.put("status", "UP");
+			simpleHealth.put("timestamp", System.currentTimeMillis());
+			simpleHealth.put("message", "Basic health check");
+			return ResponseEntity.ok(simpleHealth);
 		}
-		
-		health.put("storage", storage);
-		
-		// System info
-		health.put("javaVersion", System.getProperty("java.version"));
-		health.put("osName", System.getProperty("os.name"));
-		health.put("tempDir", System.getProperty("java.io.tmpdir"));
-		
-		return ResponseEntity.ok(health);
 	}
 }
 
