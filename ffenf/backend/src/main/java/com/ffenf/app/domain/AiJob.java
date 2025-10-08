@@ -30,7 +30,7 @@ public class AiJob {
 	@Column(nullable = false, length = 32)
 	private String status; // queued, running, completed, failed
 
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String error;
 
 	@Column(name = "created_at", nullable = false)

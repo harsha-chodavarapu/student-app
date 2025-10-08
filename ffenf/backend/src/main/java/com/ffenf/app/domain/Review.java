@@ -29,7 +29,7 @@ public class Review {
 	@Column(nullable = false)
 	private int rating;
 
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String comment;
 
 	@Column(name = "created_at", nullable = false)

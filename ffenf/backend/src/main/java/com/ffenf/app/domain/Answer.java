@@ -30,8 +30,7 @@ public class Answer {
 	@Column(name = "user_id", nullable = false)
 	private UUID userId;
 
-	@Lob
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String content;
 
 	@Column(name = "image_url", length = 512)

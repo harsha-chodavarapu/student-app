@@ -30,8 +30,7 @@ public class Question {
 	@Column(nullable = false, length = 500)
 	private String title;
 
-	@Lob
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
 
 	@Column(name = "course_code", length = 64)
