@@ -34,28 +34,41 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String path = request.getRequestURI();
 		
+		System.out.println("JWT Filter - Processing path: " + path);
+		
 		// Skip JWT processing for public endpoints
 		if (isPublicEndpoint(path)) {
+			System.out.println("JWT Filter - Skipping public endpoint: " + path);
 			filterChain.doFilter(request, response);
 			return;
 		}
 		
 		String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+		System.out.println("JWT Filter - Authorization header: " + (header != null ? "Present" : "Missing"));
+		
 		if (header != null && header.startsWith("Bearer ")) {
 			String token = header.substring(7);
+			System.out.println("JWT Filter - Token length: " + token.length());
 			try {
 				Claims claims = jwtService.parse(token);
 				String email = claims.getSubject();
 				String role = claims.get("role", String.class);
+				System.out.println("JWT Filter - Parsed email: " + email + ", role: " + role);
+				
 				Authentication auth = new UsernamePasswordAuthenticationToken(
 					email,
 					null,
 					List.of(new SimpleGrantedAuthority("ROLE_" + role))
 				);
 				SecurityContextHolder.getContext().setAuthentication(auth);
-			} catch (Exception ignored) {
+				System.out.println("JWT Filter - Authentication set successfully");
+			} catch (Exception e) {
+				System.err.println("JWT Filter - Token parsing failed: " + e.getMessage());
 				SecurityContextHolder.clearContext();
 			}
+		} else {
+			System.err.println("JWT Filter - No valid Bearer token found");
+			SecurityContextHolder.clearContext();
 		}
 		filterChain.doFilter(request, response);
 	}

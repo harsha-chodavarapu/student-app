@@ -84,10 +84,23 @@ public class MaterialsController {
         System.out.println("Content type: " + (file != null ? file.getContentType() : "NULL"));
         
         try {
-            // Enhanced authentication check
-            if (auth == null || auth.getName() == null) {
-                System.err.println("Upload failed: Authentication is null or missing name");
-                return ResponseEntity.status(401).body(Map.of("error", "Unauthorized: missing or invalid token"));
+            // Enhanced authentication check with better error handling
+            if (auth == null) {
+                System.err.println("Upload failed: Authentication is completely null - JWT token may be missing or invalid");
+                return ResponseEntity.status(401).body(Map.of(
+                    "error", "Authentication required", 
+                    "message", "Please log in to upload files",
+                    "details", "JWT token missing or invalid"
+                ));
+            }
+            
+            if (auth.getName() == null) {
+                System.err.println("Upload failed: Authentication exists but name is null");
+                return ResponseEntity.status(401).body(Map.of(
+                    "error", "Invalid authentication", 
+                    "message", "Authentication token is invalid",
+                    "details", "User name not found in token"
+                ));
             }
             
             String email = auth.getName();
