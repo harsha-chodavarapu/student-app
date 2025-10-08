@@ -57,6 +57,16 @@ public class MaterialsController {
 
     public record SearchRequest(String q, String subject, String courseCode, int page, int size) {}
 
+    @GetMapping("/upload/test")
+    public ResponseEntity<?> testUpload(Authentication auth) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("auth", auth != null ? auth.getName() : "null");
+        response.put("authorities", auth != null ? auth.getAuthorities() : "null");
+        response.put("message", "Upload test endpoint working");
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/upload")
     public ResponseEntity<?> uploadMaterial(
             @RequestParam("file") MultipartFile file,
@@ -65,6 +75,14 @@ public class MaterialsController {
             @RequestParam(value = "courseCode", required = false) String courseCode,
             @RequestParam(value = "tags", required = false) List<String> tags,
             Authentication auth) {
+        
+        System.out.println("=== UPLOAD DEBUG START ===");
+        System.out.println("Auth: " + (auth != null ? auth.getName() : "NULL"));
+        System.out.println("File: " + (file != null ? file.getOriginalFilename() : "NULL"));
+        System.out.println("Title: " + title);
+        System.out.println("File size: " + (file != null ? file.getSize() : "NULL"));
+        System.out.println("Content type: " + (file != null ? file.getContentType() : "NULL"));
+        
         try {
             // Enhanced authentication check
             if (auth == null || auth.getName() == null) {
@@ -174,10 +192,13 @@ public class MaterialsController {
                 // Don't fail the upload if coin reward fails
             }
 
+            System.out.println("=== UPLOAD SUCCESS ===");
             return ResponseEntity.ok(savedMaterial);
         } catch (Exception e) {
+            System.err.println("=== UPLOAD ERROR ===");
             System.err.println("Upload error: " + e.getMessage());
             e.printStackTrace();
+            System.err.println("=== UPLOAD ERROR END ===");
             return ResponseEntity.status(500).body(Map.of(
                 "error", "Upload failed",
                 "message", e.getMessage(),
