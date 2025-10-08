@@ -42,15 +42,13 @@ public class Material {
 	@Column(name = "mime_type", length = 128)
 	private String mimeType;
 
-	@Lob
-	@Column(name = "text_extract")
+	@Column(name = "text_extract", columnDefinition = "TEXT")
 	private String textExtract;
 
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String summary;
 
-	@Lob
-	@Column(name = "flashcards_json")
+	@Column(name = "flashcards_json", columnDefinition = "TEXT")
 	private String flashcardsJson;
 
 	@Column(name = "avg_rating", nullable = false)
