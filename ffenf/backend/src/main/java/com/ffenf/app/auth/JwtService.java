@@ -22,6 +22,10 @@ public class JwtService {
 	private long ttlSeconds;
 
 	private javax.crypto.SecretKey getSigningKey() {
+		System.out.println("JwtService - secretBase64: " + (secretBase64 != null ? secretBase64.substring(0, Math.min(10, secretBase64.length())) + "..." : "NULL"));
+		if (secretBase64 == null) {
+			throw new IllegalStateException("JWT secret is null! Check APP_JWT_SECRET environment variable.");
+		}
 		byte[] keyBytes = Decoders.BASE64.decode(secretBase64);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
