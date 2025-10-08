@@ -107,12 +107,19 @@ public class MaterialsController {
             }
             
             String token = authHeader.substring(7);
+            System.out.println("Extracted token length: " + token.length());
             String email;
             try {
+                System.out.println("Creating JwtService...");
                 com.ffenf.app.auth.JwtService jwtService = new com.ffenf.app.auth.JwtService();
+                System.out.println("Parsing JWT token...");
                 io.jsonwebtoken.Claims claims = jwtService.parse(token);
+                System.out.println("JWT parsed successfully!");
                 email = claims.getSubject();
+                System.out.println("Extracted email: " + email);
             } catch (Exception e) {
+                System.err.println("JWT parsing failed: " + e.getMessage());
+                e.printStackTrace();
                 return ResponseEntity.status(401).body(Map.of("error", "Invalid login token"));
             }
             
