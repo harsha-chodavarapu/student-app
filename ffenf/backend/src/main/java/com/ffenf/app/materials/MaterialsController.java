@@ -250,13 +250,25 @@ public class MaterialsController {
                                    @RequestParam(required = false) String courseCode,
                                    @RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "20") int size,
+                                   @RequestParam(defaultValue = "avgRating") String sortBy,
+                                   @RequestParam(defaultValue = "desc") String sortDir,
                                    Authentication auth) {
         
         try {
-            System.out.println("Search request - q: " + q + ", subject: " + subject + ", courseCode: " + courseCode + ", page: " + page + ", size: " + size);
+            System.out.println("Search request - q: " + q + ", subject: " + subject + ", courseCode: " + courseCode + ", page: " + page + ", size: " + size + ", sortBy: " + sortBy + ", sortDir: " + sortDir);
             
-            Pageable pageable = PageRequest.of(page, size, Sort.by("avgRating").descending()
-                    .and(Sort.by("createdAt").descending()));
+            // Create dynamic sorting based on parameters
+            Sort sort;
+            if ("desc".equalsIgnoreCase(sortDir)) {
+                sort = Sort.by(sortBy).descending();
+            } else {
+                sort = Sort.by(sortBy).ascending();
+            }
+            
+            // Add secondary sort by createdAt for consistency
+            sort = sort.and(Sort.by("createdAt").descending());
+            
+            Pageable pageable = PageRequest.of(page, size, sort);
             
             Page<Material> results;
             
