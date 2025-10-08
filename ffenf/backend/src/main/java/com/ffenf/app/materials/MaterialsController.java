@@ -2,6 +2,7 @@ package com.ffenf.app.materials;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -113,7 +114,7 @@ public class MaterialsController {
             }
             
             String token = authHeader.substring(7);
-            String email = null;
+            String email;
             try {
                 // Use JWT service directly since Spring Security isn't working
                 com.ffenf.app.auth.JwtService jwtService = new com.ffenf.app.auth.JwtService();
@@ -138,8 +139,9 @@ public class MaterialsController {
                 ));
             }
             
-            User currentUser = users.findByEmail(email).orElseThrow(() -> 
-                new RuntimeException("User not found: " + email));
+            final String finalEmail = email;
+            User currentUser = users.findByEmail(finalEmail).orElseThrow(() -> 
+                new RuntimeException("User not found: " + finalEmail));
 
             System.out.println("Upload request - File: " + file.getOriginalFilename() + ", Title: " + title + ", User: " + currentUser.getEmail());
             

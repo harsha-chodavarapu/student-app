@@ -87,7 +87,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         // Public GET of material metadata or file/download
         if (path.startsWith("/materials/") &&
-            (path.endsWith("/file") || path.endsWith("/download") || path.matches("/materials/[a-f0-9\-]+$"))) {
+            (path.endsWith("/file") || path.endsWith("/download") || path.matches("/materials/[a-f0-9\\-]+$"))) {
             return true;
         }
 
