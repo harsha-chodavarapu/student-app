@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 	</properties>
 	<dependencies>
 		<dependency>

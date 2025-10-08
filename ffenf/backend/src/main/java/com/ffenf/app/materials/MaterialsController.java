@@ -92,7 +92,7 @@ public class MaterialsController {
             @RequestParam(value = "tags", required = false) List<String> tags,
             HttpServletRequest request) {
         
-        System.out.println("=== NEW UPLOAD METHOD CALLED - NO SPRING SECURITY ===");
+        System.out.println("=== UPLOAD METHOD CALLED - VERSION 3.0 - NO AUTH PARAMETER ===");
         
         try {
             // Simple authentication check
