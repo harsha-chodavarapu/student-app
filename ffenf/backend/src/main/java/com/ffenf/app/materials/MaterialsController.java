@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.ffenf.app.ai.OpenAiFileService;
 import com.ffenf.app.domain.CoinTransaction;
 import com.ffenf.app.domain.Material;
@@ -64,6 +66,17 @@ public class MaterialsController {
         response.put("auth", auth != null ? auth.getName() : "null");
         response.put("authorities", auth != null ? auth.getAuthorities() : "null");
         response.put("message", "Upload test endpoint working");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/upload/test")
+    public ResponseEntity<?> testUploadPost(Authentication auth, HttpServletRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("auth", auth != null ? auth.getName() : "null");
+        response.put("authorities", auth != null ? auth.getAuthorities() : "null");
+        response.put("authHeader", request.getHeader("Authorization"));
+        response.put("message", "Upload test POST endpoint working");
         return ResponseEntity.ok(response);
     }
 

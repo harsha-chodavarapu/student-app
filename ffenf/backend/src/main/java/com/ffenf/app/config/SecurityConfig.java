@@ -13,12 +13,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.ffenf.app.auth.JwtAuthFilter;
+import com.ffenf.app.config.RequestLoggingFilter;
 
 @Configuration
 public class SecurityConfig {
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter, CorsConfigurationSource corsConfigurationSource) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter, RequestLoggingFilter requestLoggingFilter, CorsConfigurationSource corsConfigurationSource) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
@@ -30,6 +31,7 @@ public class SecurityConfig {
 					.requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/materials/search").permitAll()
                 .requestMatchers("/materials/upload").authenticated()
+                .requestMatchers("/materials/upload/test").authenticated()
 				.requestMatchers("/askhub/questions").permitAll()  // Allow reading questions without auth
 				.requestMatchers("/askhub/questions/{id}").permitAll()
 				.requestMatchers("/askhub/questions/search").permitAll()
@@ -37,6 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/ai/**").permitAll()
                 .anyRequest().permitAll()
 			)
+            .addFilterBefore(requestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(AbstractHttpConfigurer::disable);
 		return http.build();
