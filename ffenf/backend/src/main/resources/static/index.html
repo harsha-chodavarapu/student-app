@@ -16386,31 +16386,21 @@
                         <input type="text" id="searchQuery" placeholder="Search by title, subject, or course code" style="width: 200px;">
                     </div>
                     
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
-                        <label>Sort By:</label>
-                        <div style="position: relative; display: inline-block;">
-                            <button class="btn" onclick="toggleSortByOptions()" id="sortByButton" style="background-color: #2196F3; min-width: 120px;">
-                                Created At ▼
-                            </button>
-                            <div id="sortByOptions" style="display: none; position: absolute; top: 100%; left: 0; background: #2c2c2c; border: 2px solid #9C27B0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 140px; margin-top: 2px;">
-                                <div onclick="selectSortBy('createdAt')" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #555; color: white; background: #3c3c3c; border-radius: 6px 6px 0 0; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Created At</div>
-                                <div onclick="selectSortBy('avgRating')" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #555; color: white; background: #3c3c3c; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Average Rating</div>
-                                <div onclick="selectSortBy('downloadsCount')" style="padding: 12px 16px; cursor: pointer; color: white; background: #3c3c3c; border-radius: 0 0 6px 6px; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Downloads</div>
-                            </div>
-                        </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                        <label for="searchSortBy">Sort By:</label>
+                        <select id="searchSortBy" onchange="handleSortChange()" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px;">
+                            <option value="createdAt">Created At</option>
+                            <option value="avgRating">Average Rating</option>
+                            <option value="downloadsCount">Downloads</option>
+                        </select>
                     </div>
                     
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 5px;">
-                        <label>Sort Direction:</label>
-                        <div style="position: relative; display: inline-block;">
-                            <button class="btn" onclick="toggleSortDirOptions()" id="sortDirButton" style="background-color: #9C27B0; min-width: 120px;">
-                                Descending ▼
-                            </button>
-                            <div id="sortDirOptions" style="display: none; position: absolute; top: 100%; left: 0; background: #2c2c2c; border: 2px solid #9C27B0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; min-width: 140px; margin-top: 2px;">
-                                <div onclick="selectSortDir('desc')" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #555; color: white; background: #3c3c3c; border-radius: 6px 6px 0 0; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Descending</div>
-                                <div onclick="selectSortDir('asc')" style="padding: 12px 16px; cursor: pointer; color: white; background: #3c3c3c; border-radius: 0 0 6px 6px; transition: background 0.2s;" onmouseover="this.style.background='#4c4c4c'" onmouseout="this.style.background='#3c3c3c'">Ascending</div>
-                            </div>
-                        </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                        <label for="searchSortDir">Sort Direction:</label>
+                        <select id="searchSortDir" onchange="handleSortChange()" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px;">
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
                     </div>
                     
                     <button class="btn" onclick="searchMaterials()">Search</button>
@@ -16971,103 +16961,16 @@
             }
         });
 
-        // Global variables to track current sort settings
-        let currentSortBy = 'createdAt';
-        let currentSortDir = 'desc';
-
-        // Simple functions for sort buttons
-        function setSortBy(sortBy) {
-            console.log('Setting sort by:', sortBy);
-            alert('Sort By set to: ' + sortBy);
-            currentSortBy = sortBy;
+        // Simple function to handle dropdown changes
+        function handleSortChange() {
+            console.log('Sort option changed');
             searchMaterials();
         }
-
-        function setSortDir(sortDir) {
-            console.log('Setting sort direction:', sortDir);
-            alert('Sort Direction set to: ' + sortDir);
-            currentSortDir = sortDir;
-            searchMaterials();
-        }
-
-        // Dropdown functionality
-        function toggleSortByOptions() {
-            const options = document.getElementById('sortByOptions');
-            const isVisible = options.style.display === 'block';
-            options.style.display = isVisible ? 'none' : 'block';
-            
-            // Close sort direction options if open
-            document.getElementById('sortDirOptions').style.display = 'none';
-        }
-
-        function toggleSortDirOptions() {
-            const options = document.getElementById('sortDirOptions');
-            const isVisible = options.style.display === 'block';
-            options.style.display = isVisible ? 'none' : 'block';
-            
-            // Close sort by options if open
-            document.getElementById('sortByOptions').style.display = 'none';
-        }
-
-        function selectSortBy(sortBy) {
-            console.log('Sort By selected:', sortBy);
-            currentSortBy = sortBy;
-            
-            // Update button text
-            const button = document.getElementById('sortByButton');
-            const labels = {
-                'createdAt': 'Created At',
-                'avgRating': 'Average Rating',
-                'downloadsCount': 'Downloads'
-            };
-            button.textContent = labels[sortBy] + ' ▼';
-            
-            // Hide dropdown
-            document.getElementById('sortByOptions').style.display = 'none';
-            
-            // Trigger search
-            searchMaterials();
-        }
-
-        function selectSortDir(sortDir) {
-            console.log('Sort Direction selected:', sortDir);
-            currentSortDir = sortDir;
-            
-            // Update button text
-            const button = document.getElementById('sortDirButton');
-            const labels = {
-                'desc': 'Descending',
-                'asc': 'Ascending'
-            };
-            button.textContent = labels[sortDir] + ' ▼';
-            
-            // Hide dropdown
-            document.getElementById('sortDirOptions').style.display = 'none';
-            
-            // Trigger search
-            searchMaterials();
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            const sortByOptions = document.getElementById('sortByOptions');
-            const sortDirOptions = document.getElementById('sortDirOptions');
-            const sortByButton = document.getElementById('sortByButton');
-            const sortDirButton = document.getElementById('sortDirButton');
-            
-            if (!sortByButton.contains(event.target) && !sortByOptions.contains(event.target)) {
-                sortByOptions.style.display = 'none';
-            }
-            
-            if (!sortDirButton.contains(event.target) && !sortDirOptions.contains(event.target)) {
-                sortDirOptions.style.display = 'none';
-            }
-        });
 
         async function searchMaterials() {
             const query = document.getElementById('searchQuery').value;
-            const sortBy = currentSortBy;
-            const sortDir = currentSortDir;
+            const sortBy = document.getElementById('searchSortBy').value;
+            const sortDir = document.getElementById('searchSortDir').value;
             
             console.log('searchMaterials called with:', { query, sortBy, sortDir });
             
