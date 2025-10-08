@@ -70,7 +70,7 @@ public class MaterialsController {
             @RequestParam(value = "tags", required = false) List<String> tags,
             HttpServletRequest request) {
         
-        System.out.println("=== UPLOAD METHOD CALLED - SIMPLIFIED ===");
+        System.out.println("=== UPLOAD METHOD CALLED - SIMPLIFIED - VERSION 2.0 ===");
         
         try {
             // Simple authentication check
