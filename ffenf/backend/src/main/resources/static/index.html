@@ -16380,31 +16380,32 @@
             <!-- Search Section -->
             <div id="searchContent" class="content-section hidden">
                 <h2 class="section-title">Search Materials</h2>
-                <div class="search-form" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
-                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                <div class="search-form" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
                         <label for="searchQuery">Search Query:</label>
-                        <input type="text" id="searchQuery" placeholder="Search by title, subject, or course code" style="width: 200px;">
+                        <input type="text" id="searchQuery" placeholder="Search by title, subject, or course code" style="width: 200px; padding: 8px; border-radius: 4px; border: 1px solid #9C27B0; background: #2c2c2c; color: white;">
                     </div>
                     
-                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                        <label for="searchSortBy">Sort By:</label>
-                        <select id="searchSortBy" onchange="handleSortChange()" onclick="console.log('Sort By clicked')" style="padding: 8px 12px; border-radius: 4px; border: 2px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px; font-size: 14px;">
-                            <option value="createdAt" style="background: #2c2c2c; color: white;">Created At</option>
-                            <option value="avgRating" style="background: #2c2c2c; color: white;">Average Rating</option>
-                            <option value="downloadsCount" style="background: #2c2c2c; color: white;">Downloads</option>
-                        </select>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label>Sort By:</label>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="btn" onclick="setSortBy('createdAt')" id="sortByCreatedAt" style="background-color: #4CAF50; padding: 8px 12px; font-size: 12px;">Created At</button>
+                                <button class="btn" onclick="setSortBy('avgRating')" id="sortByRating" style="background-color: #2196F3; padding: 8px 12px; font-size: 12px;">Average Rating</button>
+                                <button class="btn" onclick="setSortBy('downloadsCount')" id="sortByDownloads" style="background-color: #FF9800; padding: 8px 12px; font-size: 12px;">Downloads</button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label>Sort Direction:</label>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="btn" onclick="setSortDir('desc')" id="sortDirDesc" style="background-color: #9C27B0; padding: 8px 12px; font-size: 12px;">Descending</button>
+                                <button class="btn" onclick="setSortDir('asc')" id="sortDirAsc" style="background-color: #E91E63; padding: 8px 12px; font-size: 12px;">Ascending</button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn" onclick="searchMaterials()">Search</button>
                     </div>
-                    
-                    <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                        <label for="searchSortDir">Sort Direction:</label>
-                        <select id="searchSortDir" onchange="handleSortChange()" onclick="console.log('Sort Direction clicked')" style="padding: 8px 12px; border-radius: 4px; border: 2px solid #9C27B0; background: #2c2c2c; color: white; min-width: 140px; font-size: 14px;">
-                            <option value="desc" style="background: #2c2c2c; color: white;">Descending</option>
-                            <option value="asc" style="background: #2c2c2c; color: white;">Ascending</option>
-                        </select>
-                    </div>
-                    
-                    <button class="btn" onclick="searchMaterials()">Search</button>
-                    <button class="btn" onclick="testDropdowns()" style="background-color: orange;">Test Dropdowns</button>
                 </div>
                 <div id="searchMessage" class="status-message"></div>
                 <div id="searchResults" class="material-grid"></div>
@@ -16962,24 +16963,38 @@
             }
         });
 
-        // Simple function to handle dropdown changes
-        function handleSortChange() {
-            console.log('Sort option changed');
+        // Global variables to track current sort settings
+        let currentSortBy = 'createdAt';
+        let currentSortDir = 'desc';
+
+        // Simple functions for sort buttons
+        function setSortBy(sortBy) {
+            console.log('Setting sort by:', sortBy);
+            currentSortBy = sortBy;
+            
+            // Update button styles to show selection
+            document.getElementById('sortByCreatedAt').style.opacity = sortBy === 'createdAt' ? '1' : '0.6';
+            document.getElementById('sortByRating').style.opacity = sortBy === 'avgRating' ? '1' : '0.6';
+            document.getElementById('sortByDownloads').style.opacity = sortBy === 'downloadsCount' ? '1' : '0.6';
+            
             searchMaterials();
         }
 
-        // Test function to verify dropdowns are working
-        function testDropdowns() {
-            const sortBy = document.getElementById('searchSortBy').value;
-            const sortDir = document.getElementById('searchSortDir').value;
-            alert('Current values:\nSort By: ' + sortBy + '\nSort Direction: ' + sortDir);
-            console.log('Dropdown test - Sort By:', sortBy, 'Sort Direction:', sortDir);
+        function setSortDir(sortDir) {
+            console.log('Setting sort direction:', sortDir);
+            currentSortDir = sortDir;
+            
+            // Update button styles to show selection
+            document.getElementById('sortDirDesc').style.opacity = sortDir === 'desc' ? '1' : '0.6';
+            document.getElementById('sortDirAsc').style.opacity = sortDir === 'asc' ? '1' : '0.6';
+            
+            searchMaterials();
         }
 
         async function searchMaterials() {
             const query = document.getElementById('searchQuery').value;
-            const sortBy = document.getElementById('searchSortBy').value;
-            const sortDir = document.getElementById('searchSortDir').value;
+            const sortBy = currentSortBy;
+            const sortDir = currentSortDir;
             
             console.log('searchMaterials called with:', { query, sortBy, sortDir });
             
