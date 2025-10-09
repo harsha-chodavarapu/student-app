@@ -148,10 +148,10 @@ public class MaterialsController {
                 return ResponseEntity.badRequest().body(Map.of("error", "Only PDF files are supported"));
             }
 
-            // Check file size (50MB limit)
-            if (file.getSize() > 50 * 1024 * 1024) {
+            // Check file size (100MB limit)
+            if (file.getSize() > 100 * 1024 * 1024) {
                 System.err.println("Upload failed: File too large - " + file.getSize() + " bytes");
-                return ResponseEntity.badRequest().body(Map.of("error", "File size exceeds 50MB limit"));
+                return ResponseEntity.badRequest().body(Map.of("error", "File size exceeds 100MB limit"));
             }
 
             // Store the file locally first (more reliable than OpenAI)
