@@ -222,17 +222,9 @@ public class AiController {
             ));
         }
 
-        // Check if AI job already exists for this material and type
-        AiJob existingJob = aiJobs.findByMaterialIdAndTypeAndStatus(materialId, type, "completed").orElse(null);
-        if (existingJob != null) {
-            System.out.println("Found existing completed job for material: " + materialId);
-            return ResponseEntity.ok(Map.of(
-                "message", "Content already generated",
-                "jobId", existingJob.getId(),
-                "status", "completed"
-            ));
-        }
-        System.out.println("No existing job found, proceeding with new job creation");
+        // Allow regeneration - don't check for existing jobs
+        // Users should be able to generate fresh content each time
+        System.out.println("Proceeding with new AI generation for material: " + materialId + ", type: " + type);
 
         // Deduct coins - DISABLED FOR TESTING
         boolean skipCoinDeduction = true; // Set to false to re-enable coin deduction
