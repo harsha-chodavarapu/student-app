@@ -2117,6 +2117,49 @@
             animation: progress-animation 2s ease-in-out infinite;
         }
 
+        /* Upload Progress Styles */
+        .upload-progress {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .upload-progress.hidden {
+            display: none;
+        }
+
+        .upload-progress .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .upload-progress .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9C27B0, #E91E63);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: none; /* Remove animation for upload progress */
+        }
+
+        .upload-progress .progress-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .upload-progress .progress-percentage {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
         @keyframes progress-animation {
             0% { width: 0%; }
             50% { width: 70%; }
@@ -16404,7 +16447,22 @@
                         <input type="text" id="uploadTags" placeholder="calculus, algebra, homework">
                     </div>
                 </div>
-                <button class="btn" onclick="uploadMaterial()">Upload Material</button>
+                <button class="btn" onclick="uploadMaterial()" id="uploadBtn">
+                    <span id="uploadBtnText">Upload Material</span>
+                    <div id="uploadSpinner" class="spinner hidden">
+                        <div class="spinner-inner"></div>
+                    </div>
+                </button>
+                
+                <!-- Upload Progress Bar -->
+                <div id="uploadProgress" class="upload-progress hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Uploading...</div>
+                    <div class="progress-percentage" id="progressPercentage">0%</div>
+                </div>
+                
                 <div id="uploadMessage" class="message"></div>
             </div>
 
@@ -17134,6 +17192,10 @@
                 return;
             }
 
+            // Show upload progress
+            setUploadProgressState(true);
+            updateUploadProgress(0, 'Preparing upload...');
+
             const formData = new FormData();
             formData.append('file', file);
             formData.append('title', title);
@@ -17145,6 +17207,8 @@
             });
 
             try {
+                updateUploadProgress(10, 'Uploading file...');
+                
                 const response = await fetch(`${API_BASE}/materials/upload-new?v=${Date.now()}`, {
                     method: 'POST',
                     headers: {
@@ -17153,20 +17217,28 @@
                     body: formData
                 });
 
+                updateUploadProgress(80, 'Processing file...');
+
                 if (response.ok) {
-                    showStatus('Material uploaded successfully! You earned 1 coin.', 'success', 'uploadMessage');
+                    updateUploadProgress(100, 'Upload completed!');
                     
-                    // Clear form
-                    document.getElementById('uploadFile').value = '';
-                    document.getElementById('uploadTitle').value = '';
-                    document.getElementById('uploadSubject').value = '';
-                    document.getElementById('uploadCourseCode').value = '';
-                    document.getElementById('uploadTags').value = '';
-                    
-                    // Refresh profile and recent materials
-                    fetchProfile();
-                    fetchRecentMaterials();
+                    setTimeout(() => {
+                        showStatus('Material uploaded successfully! You earned 1 coin.', 'success', 'uploadMessage');
+                        setUploadProgressState(false);
+                        
+                        // Clear form
+                        document.getElementById('uploadFile').value = '';
+                        document.getElementById('uploadTitle').value = '';
+                        document.getElementById('uploadSubject').value = '';
+                        document.getElementById('uploadCourseCode').value = '';
+                        document.getElementById('uploadTags').value = '';
+                        
+                        // Refresh profile and recent materials
+                        fetchProfile();
+                        fetchRecentMaterials();
+                    }, 1000);
                 } else {
+                    setUploadProgressState(false);
                     const errorText = await response.text();
                     let errorMessage = 'Upload failed';
                     try {
@@ -17178,8 +17250,38 @@
                     showStatus(`Upload failed: ${errorMessage}`, 'error', 'uploadMessage');
                 }
             } catch (error) {
+                setUploadProgressState(false);
                 showStatus('Network error: ' + error.message, 'error', 'uploadMessage');
             }
+        }
+
+        function setUploadProgressState(show) {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadBtnText = document.getElementById('uploadBtnText');
+            const uploadSpinner = document.getElementById('uploadSpinner');
+            const uploadProgress = document.getElementById('uploadProgress');
+            
+            if (show) {
+                uploadBtn.disabled = true;
+                uploadBtnText.textContent = 'Uploading...';
+                uploadSpinner.classList.remove('hidden');
+                uploadProgress.classList.remove('hidden');
+            } else {
+                uploadBtn.disabled = false;
+                uploadBtnText.textContent = 'Upload Material';
+                uploadSpinner.classList.add('hidden');
+                uploadProgress.classList.add('hidden');
+            }
+        }
+
+        function updateUploadProgress(percentage, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const progressPercentage = document.getElementById('progressPercentage');
+            
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = text;
+            progressPercentage.textContent = percentage + '%';
         }
 
         async function loadAIMaterials() {
