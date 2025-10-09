@@ -354,6 +354,9 @@ public class AiSummaryService {
             Map<String, Object> result = objectMapper.readValue(response.body(), Map.class);
             Object dataObj = result.get("data");
             
+            // Debug logging to understand response structure
+            System.out.println("Response data type: " + (dataObj != null ? dataObj.getClass().getSimpleName() : "null"));
+            
             // Handle both ArrayList and Object[] cases
             Object[] data;
             if (dataObj instanceof java.util.List) {
@@ -368,6 +371,7 @@ public class AiSummaryService {
                 Map<String, Object> message = (Map<String, Object>) messageObj;
                 if ("assistant".equals(message.get("role"))) {
                     Object contentObj = message.get("content");
+                    System.out.println("Content object type: " + (contentObj != null ? contentObj.getClass().getSimpleName() : "null"));
                     
                     // Handle both ArrayList and Object[] cases for content
                     Object[] content;
@@ -381,8 +385,20 @@ public class AiSummaryService {
                     if (content.length > 0) {
                         Map<String, Object> contentItem = (Map<String, Object>) content[0];
                         if ("text".equals(contentItem.get("type"))) {
-                            Map<String, Object> text = (Map<String, Object>) contentItem.get("text");
-                            return (String) text.get("value");
+                            Object textObj = contentItem.get("text");
+                            if (textObj instanceof Map) {
+                                Map<String, Object> text = (Map<String, Object>) textObj;
+                                Object valueObj = text.get("value");
+                                if (valueObj instanceof String) {
+                                    return (String) valueObj;
+                                } else {
+                                    System.err.println("Expected String value but got: " + valueObj.getClass().getSimpleName());
+                                    return valueObj.toString();
+                                }
+                            } else {
+                                System.err.println("Expected Map for text but got: " + textObj.getClass().getSimpleName());
+                                return textObj.toString();
+                            }
                         }
                     }
                 }
