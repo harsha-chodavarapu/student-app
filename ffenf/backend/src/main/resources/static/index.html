@@ -2160,6 +2160,96 @@
             text-align: right;
         }
 
+        /* Markdown Content Styling */
+        .ai-content h1, .ai-content h2, .ai-content h3 {
+            color: var(--text-primary);
+            margin: 16px 0 8px 0;
+            font-weight: 600;
+        }
+
+        .ai-content h1 {
+            font-size: 24px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+        }
+
+        .ai-content h2 {
+            font-size: 20px;
+            color: var(--accent-color);
+        }
+
+        .ai-content h3 {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .ai-content strong {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ai-content em {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .ai-content ul, .ai-content ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .ai-content li {
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+
+        .ai-content br {
+            margin: 4px 0;
+        }
+
+        /* Answer content styling */
+        .answer-content h1, .answer-content h2, .answer-content h3 {
+            color: var(--text-primary);
+            margin: 12px 0 6px 0;
+            font-weight: 600;
+        }
+
+        .answer-content h1 {
+            font-size: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .answer-content h2 {
+            font-size: 18px;
+            color: var(--accent-color);
+        }
+
+        .answer-content h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .answer-content strong {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .answer-content em {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .answer-content ul, .answer-content ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .answer-content li {
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+
         @keyframes progress-animation {
             0% { width: 0%; }
             50% { width: 70%; }
@@ -17526,7 +17616,7 @@
                     contentHtml += `
                         <div class="ai-result-section">
                             <h3>📝 Summary</h3>
-                            <div class="ai-content">${data.summary}</div>
+                            <div class="ai-content">${markdownToHtml(data.summary)}</div>
                         </div>
                     `;
                 }
@@ -17602,7 +17692,7 @@
                             contentHtml += `
                                 <div class="ai-result-section">
                                     <h3>📝 Summary</h3>
-                                    <div class="ai-content">${data.summary}</div>
+                                    <div class="ai-content">${markdownToHtml(data.summary)}</div>
                                 </div>
                             `;
                         }
@@ -18977,7 +19067,7 @@
                             '<div class="no-answers">No answers yet. Be the first to answer!</div>' : 
                             answers.map(answer => `
                                 <div class="answer-item">
-                                    <div class="answer-content">${answer.content}</div>
+                                    <div class="answer-content">${markdownToHtml(answer.content)}</div>
                                     <div class="answer-meta">
                                         <span class="answer-author">Answered by: ${answer.authorName || 'Anonymous'}</span>
                                         <span class="answer-time">${formatTimeAgo(answer.createdAt)}</span>
@@ -19429,6 +19519,38 @@
             } else {
                 return `${diffDays} days ago`;
             }
+        }
+
+        // Simple Markdown to HTML converter
+        function markdownToHtml(markdown) {
+            if (!markdown) return '';
+            
+            let html = markdown;
+            
+            // Convert headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Convert bold text
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            
+            // Convert italic text
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+            
+            // Convert line breaks
+            html = html.replace(/\n/g, '<br>');
+            
+            // Convert bullet points
+            html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Convert numbered lists
+            html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+            
+            return html;
         }
     </script>
 
