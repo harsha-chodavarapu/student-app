@@ -2347,72 +2347,73 @@
             line-height: 1.4;
         }
 
-        /* Custom Scrollbar Styling - Subtle Theme Match */
+        /* Custom Scrollbar Styling - Blue-Purple Theme */
         html {
             scrollbar-width: thin;
-            scrollbar-color: #666666 #1a1a1a;
+            scrollbar-color: #4a4a8a #1a1a2e;
         }
 
         body {
             scrollbar-width: thin;
-            scrollbar-color: #666666 #1a1a1a;
+            scrollbar-color: #4a4a8a #1a1a2e;
         }
 
         * {
             scrollbar-width: thin;
-            scrollbar-color: #666666 #1a1a1a;
+            scrollbar-color: #4a4a8a #1a1a2e;
         }
 
-        /* Webkit Scrollbar Styling - Subtle */
+        /* Webkit Scrollbar Styling - Blue-Purple */
         ::-webkit-scrollbar {
-            width: 8px !important;
-            height: 8px !important;
+            width: 12px !important;
+            height: 12px !important;
         }
 
         ::-webkit-scrollbar-track {
-            background: #1a1a1a !important;
-            border-radius: 4px !important;
+            background: #1a1a2e !important;
+            border-radius: 6px !important;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #666666 !important;
-            border-radius: 4px !important;
-            border: 1px solid #1a1a1a !important;
+            background: #4a4a8a !important;
+            border-radius: 6px !important;
+            border: 2px solid #1a1a2e !important;
             transition: all 0.3s ease !important;
+            box-shadow: inset 0 0 2px rgba(0,0,0,0.3) !important;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #888888 !important;
-            border: 1px solid #1a1a1a !important;
+            background: #5a5a9a !important;
+            border: 2px solid #1a1a2e !important;
         }
 
         ::-webkit-scrollbar-thumb:active {
-            background: #999999 !important;
+            background: #6a6aaa !important;
         }
 
         ::-webkit-scrollbar-corner {
-            background: #1a1a1a !important;
+            background: #1a1a2e !important;
         }
 
         /* Force scrollbar styling on all elements */
         *::-webkit-scrollbar {
-            width: 8px !important;
-            height: 8px !important;
+            width: 12px !important;
+            height: 12px !important;
         }
 
         *::-webkit-scrollbar-track {
-            background: #1a1a1a !important;
-            border-radius: 4px !important;
+            background: #1a1a2e !important;
+            border-radius: 6px !important;
         }
 
         *::-webkit-scrollbar-thumb {
-            background: #666666 !important;
-            border-radius: 4px !important;
-            border: 1px solid #1a1a1a !important;
+            background: #4a4a8a !important;
+            border-radius: 6px !important;
+            border: 2px solid #1a1a2e !important;
         }
 
         *::-webkit-scrollbar-thumb:hover {
-            background: #888888 !important;
+            background: #5a5a9a !important;
         }
 
         /* Custom scrollbar for specific containers */
@@ -16980,7 +16981,7 @@
             // Courses will be loaded when user navigates to My Courses page
         }
 
-        // Force scrollbar styling - Multiple Approaches
+        // Custom scrollbar with blue-purple color from image
         function applyScrollbarStyling() {
             // Remove any existing scrollbar styles first
             const existingStyle = document.getElementById('scrollbar-styles');
@@ -16988,119 +16989,125 @@
                 existingStyle.remove();
             }
 
-            // Create new style with multiple approaches
+            // Create style with the exact blue-purple color from the image
             const style = document.createElement('style');
             style.id = 'scrollbar-styles';
             style.textContent = `
-                /* Approach 1: Direct webkit styling */
+                /* Custom scrollbar with blue-purple theme */
                 ::-webkit-scrollbar {
-                    width: 8px !important;
-                    height: 8px !important;
+                    width: 12px !important;
+                    height: 12px !important;
                     background: transparent !important;
                 }
                 
                 ::-webkit-scrollbar-track {
-                    background: #1a1a1a !important;
-                    border-radius: 4px !important;
+                    background: #1a1a2e !important;
+                    border-radius: 6px !important;
                     border: none !important;
                 }
                 
                 ::-webkit-scrollbar-thumb {
-                    background: #666666 !important;
-                    border-radius: 4px !important;
-                    border: 1px solid #1a1a1a !important;
-                    min-height: 20px !important;
+                    background: #4a4a8a !important;
+                    border-radius: 6px !important;
+                    border: 2px solid #1a1a2e !important;
+                    min-height: 30px !important;
+                    box-shadow: inset 0 0 2px rgba(0,0,0,0.3) !important;
                 }
                 
                 ::-webkit-scrollbar-thumb:hover {
-                    background: #888888 !important;
+                    background: #5a5a9a !important;
+                    border: 2px solid #1a1a2e !important;
                 }
                 
                 ::-webkit-scrollbar-thumb:active {
-                    background: #999999 !important;
+                    background: #6a6aaa !important;
                 }
                 
                 ::-webkit-scrollbar-corner {
-                    background: #1a1a1a !important;
+                    background: #1a1a2e !important;
                 }
                 
-                /* Approach 2: Force on all elements */
+                /* Force on all elements */
                 *::-webkit-scrollbar {
-                    width: 8px !important;
-                    height: 8px !important;
+                    width: 12px !important;
+                    height: 12px !important;
                 }
                 
                 *::-webkit-scrollbar-track {
-                    background: #1a1a1a !important;
-                    border-radius: 4px !important;
+                    background: #1a1a2e !important;
+                    border-radius: 6px !important;
                 }
                 
                 *::-webkit-scrollbar-thumb {
-                    background: #666666 !important;
-                    border-radius: 4px !important;
-                    border: 1px solid #1a1a1a !important;
+                    background: #4a4a8a !important;
+                    border-radius: 6px !important;
+                    border: 2px solid #1a1a2e !important;
                 }
                 
                 *::-webkit-scrollbar-thumb:hover {
-                    background: #888888 !important;
+                    background: #5a5a9a !important;
                 }
                 
-                /* Approach 3: Firefox styling */
+                /* Firefox styling */
                 html, body, * {
                     scrollbar-width: thin !important;
-                    scrollbar-color: #666666 #1a1a1a !important;
+                    scrollbar-color: #4a4a8a #1a1a2e !important;
                 }
                 
-                /* Approach 4: Force override any system settings */
+                /* Force override */
                 html {
                     scrollbar-width: thin !important;
-                    scrollbar-color: #666666 #1a1a1a !important;
+                    scrollbar-color: #4a4a8a #1a1a2e !important;
                 }
                 
                 body {
                     scrollbar-width: thin !important;
-                    scrollbar-color: #666666 #1a1a1a !important;
+                    scrollbar-color: #4a4a8a #1a1a2e !important;
+                }
+                
+                /* Additional styling for better visibility */
+                .content-section::-webkit-scrollbar {
+                    width: 12px !important;
+                }
+                
+                .content-section::-webkit-scrollbar-track {
+                    background: #1a1a2e !important;
+                    border-radius: 6px !important;
+                }
+                
+                .content-section::-webkit-scrollbar-thumb {
+                    background: #4a4a8a !important;
+                    border-radius: 6px !important;
+                    border: 2px solid #1a1a2e !important;
+                }
+                
+                .sidebar::-webkit-scrollbar {
+                    width: 12px !important;
+                }
+                
+                .sidebar::-webkit-scrollbar-track {
+                    background: #1a1a2e !important;
+                    border-radius: 6px !important;
+                }
+                
+                .sidebar::-webkit-scrollbar-thumb {
+                    background: #4a4a8a !important;
+                    border-radius: 6px !important;
+                    border: 2px solid #1a1a2e !important;
                 }
             `;
             document.head.appendChild(style);
             
-            // Also try to force apply to body
+            // Force apply to body
             document.body.style.scrollbarWidth = 'thin';
-            document.body.style.scrollbarColor = '#666666 #1a1a1a';
+            document.body.style.scrollbarColor = '#4a4a8a #1a1a2e';
             
-            console.log('Scrollbar styling applied');
+            console.log('Blue-purple scrollbar styling applied');
         }
 
         // Apply scrollbar styling on page load
         document.addEventListener('DOMContentLoaded', applyScrollbarStyling);
         applyScrollbarStyling(); // Also apply immediately
-        
-        // Add test button for scrollbar debugging
-        function addScrollbarTestButton() {
-            const testButton = document.createElement('button');
-            testButton.textContent = 'Test Scrollbar';
-            testButton.style.cssText = `
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                z-index: 9999;
-                background: #9C27B0;
-                color: white;
-                border: none;
-                padding: 8px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 12px;
-            `;
-            testButton.onclick = function() {
-                applyScrollbarStyling();
-                alert('Scrollbar styling reapplied! Check console for details.');
-            };
-            document.body.appendChild(testButton);
-        }
-        
-        // Add test button after DOM loads
-        document.addEventListener('DOMContentLoaded', addScrollbarTestButton);
 
         function showTab(tabId) {
             // Hide all tab contents
@@ -17640,19 +17647,19 @@
                     updateUploadProgress(100, 'Upload completed!');
                     
                     setTimeout(() => {
-                        showStatus('Material uploaded successfully! You earned 1 coin.', 'success', 'uploadMessage');
+                    showStatus('Material uploaded successfully! You earned 1 coin.', 'success', 'uploadMessage');
                         setUploadProgressState(false);
-                        
-                        // Clear form
-                        document.getElementById('uploadFile').value = '';
-                        document.getElementById('uploadTitle').value = '';
-                        document.getElementById('uploadSubject').value = '';
-                        document.getElementById('uploadCourseCode').value = '';
-                        document.getElementById('uploadTags').value = '';
-                        
-                        // Refresh profile and recent materials
-                        fetchProfile();
-                        fetchRecentMaterials();
+                    
+                    // Clear form
+                    document.getElementById('uploadFile').value = '';
+                    document.getElementById('uploadTitle').value = '';
+                    document.getElementById('uploadSubject').value = '';
+                    document.getElementById('uploadCourseCode').value = '';
+                    document.getElementById('uploadTags').value = '';
+                    
+                    // Refresh profile and recent materials
+                    fetchProfile();
+                    fetchRecentMaterials();
                     }, 1000);
                 } else {
                     setUploadProgressState(false);
