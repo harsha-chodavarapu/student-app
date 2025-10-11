@@ -641,6 +641,8 @@
             min-height: 100vh;
             background: var(--bg-primary);
             transition: background-color 0.3s ease;
+            overflow-y: auto;
+            max-height: 100vh;
         }
 
         [data-theme="dark"] .main-content {
@@ -2414,6 +2416,37 @@
 
         *::-webkit-scrollbar-thumb:hover {
             background: #5a5a9a !important;
+        }
+
+        /* Responsive adjustments for different zoom levels */
+        @media screen and (min-resolution: 1.1dppx) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .askhub-card {
+                padding: 20px;
+            }
+            
+            .askhub-main {
+                gap: 20px;
+                padding: 15px 0;
+            }
+        }
+        
+        @media screen and (min-resolution: 1.2dppx) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .askhub-card {
+                padding: 18px;
+            }
+            
+            .askhub-main {
+                gap: 18px;
+                padding: 12px 0;
+            }
         }
 
         /* Custom scrollbar for specific containers */
@@ -15853,15 +15886,20 @@
             flex-direction: column;
             gap: 24px;
             padding: 20px 0;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .ask-section {
             display: block !important;
         }
         
-        /* Prevent unwanted scrolling in AskHub */
+        /* AskHub Content Container */
         #askhubContent {
             scroll-behavior: auto;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+            padding-bottom: 20px;
         }
         
         .askhub-main {
@@ -15875,6 +15913,8 @@
             border: 2px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .askhub-card:hover {
