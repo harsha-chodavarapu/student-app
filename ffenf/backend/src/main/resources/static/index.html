@@ -2044,6 +2044,54 @@
             position: relative;
             overflow: hidden;
         }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-accent::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-accent:hover::before {
+            left: 100%;
+        }
+        
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        [data-theme="dark"] .btn-accent {
+            background: linear-gradient(135deg, #00d4aa, #20c997);
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+        }
+        
+        [data-theme="dark"] .btn-accent:hover {
+            background: linear-gradient(135deg, #20c997, #00d4aa);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.4);
+        }
 
         .btn-danger::before {
             content: '';
@@ -18259,6 +18307,11 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Bookmark Material
                                 </button>`
                             }
+                            ${material.courseCode ? `
+                                <button class="btn btn-accent" onclick="addCourseToMyCourses('${material.courseCode}', '${material.subject || 'Unknown Subject'}')">
+                                    📚 Add Course
+                                </button>
+                            ` : ''}
                         </div>
 
                         <div class="reviews-section">
@@ -19997,6 +20050,76 @@
             html = html.replace(/(<br>\s*){3,}/g, '<br><br>');
             
             return html;
+        }
+        
+        // Add course to My Courses
+        async function addCourseToMyCourses(courseCode, subject) {
+            if (!authToken) {
+                console.log('No auth token available for adding course');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/profile/me/courses/${courseCode}/bookmark`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject: subject
+                    })
+                });
+                
+                if (response.ok) {
+                    showStatus(`Course ${courseCode} added to My Courses successfully!`, 'success');
+                    // Refresh courses list to show updated course
+                    if (typeof loadMyCourses === 'function') {
+                        loadMyCourses();
+                    }
+                } else {
+                    const errorData = await response.json();
+                    showStatus('Failed to add course: ' + (errorData.message || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                console.error('Error adding course:', error);
+                showStatus('Network error: ' + error.message, 'error');
+            }
+        }
+        
+        // Update material bookmark status in UI without refresh
+        function updateMaterialBookmarkStatus(materialId, isBookmarked) {
+            // Update bookmark buttons in material cards
+            const bookmarkButtons = document.querySelectorAll(`[onclick*="bookmarkMaterial('${materialId}')"], [onclick*="unbookmarkMaterial('${materialId}')"]`);
+            bookmarkButtons.forEach(button => {
+                if (isBookmarked) {
+                    button.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Remove Bookmark
+                    `;
+                    button.onclick = () => unbookmarkMaterial(materialId);
+                    button.classList.add('bookmarked');
+                } else {
+                    button.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Bookmark Material
+                    `;
+                    button.onclick = () => bookmarkMaterial(materialId);
+                    button.classList.remove('bookmarked');
+                }
+            });
+            
+            // Update bookmark buttons in material detail view
+            const detailBookmarkButtons = document.querySelectorAll('.bookmark-btn');
+            detailBookmarkButtons.forEach(button => {
+                if (button.onclick && button.onclick.toString().includes(materialId)) {
+                    if (isBookmarked) {
+                        button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+                        button.classList.add('bookmarked');
+                    } else {
+                        button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+                        button.classList.remove('bookmarked');
+                    }
+                }
+            });
         }
     </script>
 
