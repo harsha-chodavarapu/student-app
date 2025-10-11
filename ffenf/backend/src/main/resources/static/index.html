@@ -637,12 +637,12 @@
 
         .main-content {
             margin-left: 250px;
-            padding: 30px;
+            padding: 20px;
             min-height: 100vh;
             background: var(--bg-primary);
             transition: background-color 0.3s ease;
-            overflow-y: auto;
-            max-height: 100vh;
+            overflow-y: visible;
+            height: auto;
         }
 
         [data-theme="dark"] .main-content {
@@ -844,10 +844,10 @@
 
         .content-section {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             position: relative;
             overflow: hidden;
         }
@@ -15790,7 +15790,7 @@
         /* AskHub Styles */
         .askhub-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         .askhub-subtitle {
@@ -15884,8 +15884,8 @@
         .askhub-main {
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            padding: 20px 0;
+            gap: 16px;
+            padding: 10px 0;
             max-width: 100%;
             overflow-x: hidden;
         }
@@ -15894,12 +15894,13 @@
             display: block !important;
         }
         
-        /* AskHub Content Container */
+        /* AskHub Content Container - Compact Layout */
         #askhubContent {
             scroll-behavior: auto;
-            overflow-y: auto;
-            max-height: calc(100vh - 120px);
-            padding-bottom: 20px;
+            overflow-y: visible;
+            height: auto;
+            padding: 15px !important;
+            margin-bottom: 15px !important;
         }
         
         .askhub-main {
@@ -15908,8 +15909,8 @@
 
         .askhub-card {
             background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 12px;
+            padding: 16px;
             border: 2px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
