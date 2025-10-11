@@ -2161,7 +2161,7 @@
         }
 
         /* Markdown Content Styling */
-        .ai-content h1, .ai-content h2, .ai-content h3 {
+        .ai-content h1, .ai-content h2, .ai-content h3, .ai-content h4, .ai-content h5, .ai-content h6 {
             color: var(--text-primary);
             margin: 16px 0 8px 0;
             font-weight: 600;
@@ -2181,6 +2181,24 @@
         .ai-content h3 {
             font-size: 18px;
             color: var(--text-primary);
+        }
+
+        .ai-content h4 {
+            font-size: 16px;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .ai-content h5 {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .ai-content h6 {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .ai-content strong {
@@ -2207,8 +2225,69 @@
             margin: 4px 0;
         }
 
+        /* Additional Markdown Elements */
+        .ai-content code {
+            background: var(--bg-tertiary);
+            color: var(--accent-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .ai-content pre {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .ai-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .ai-content blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 16px;
+            margin: 12px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .ai-content hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+        .ai-content del {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .ai-content a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .ai-content a:hover {
+            text-decoration: underline;
+        }
+
+        .ai-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
         /* Answer content styling */
-        .answer-content h1, .answer-content h2, .answer-content h3 {
+        .answer-content h1, .answer-content h2, .answer-content h3, .answer-content h4, .answer-content h5, .answer-content h6 {
             color: var(--text-primary);
             margin: 12px 0 6px 0;
             font-weight: 600;
@@ -2228,6 +2307,24 @@
         .answer-content h3 {
             font-size: 16px;
             color: var(--text-primary);
+        }
+
+        .answer-content h4 {
+            font-size: 14px;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .answer-content h5 {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .answer-content h6 {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .answer-content strong {
@@ -19521,34 +19618,67 @@
             }
         }
 
-        // Simple Markdown to HTML converter
+        // Comprehensive Markdown to HTML converter
         function markdownToHtml(markdown) {
             if (!markdown) return '';
             
             let html = markdown;
             
-            // Convert headers
+            // Convert all heading levels (H1-H6)
+            html = html.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
+            html = html.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
+            html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
             html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
             html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
             html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
             
-            // Convert bold text
+            // Convert bold text (multiple formats)
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
             
-            // Convert italic text
+            // Convert italic text (multiple formats)
             html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
             html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+            
+            // Convert strikethrough
+            html = html.replace(/~~(.*?)~~/g, '<del>$1</del>');
+            
+            // Convert inline code
+            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+            
+            // Convert code blocks
+            html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            
+            // Convert blockquotes
+            html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+            
+            // Convert horizontal rules
+            html = html.replace(/^---$/gim, '<hr>');
+            html = html.replace(/^\*\*\*$/gim, '<hr>');
+            html = html.replace(/^___$/gim, '<hr>');
+            
+            // Convert links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            
+            // Convert images
+            html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
+            
+            // Convert bullet points (improved)
+            html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/^\+ (.*$)/gim, '<li>$1</li>');
+            
+            // Convert numbered lists
+            html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+            
+            // Wrap consecutive list items in ul/ol tags
+            html = html.replace(/(<li>.*<\/li>(\s*<li>.*<\/li>)*)/g, '<ul>$1</ul>');
             
             // Convert line breaks
             html = html.replace(/\n/g, '<br>');
             
-            // Convert bullet points
-            html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-            
-            // Convert numbered lists
-            html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+            // Clean up multiple consecutive br tags
+            html = html.replace(/(<br>\s*){3,}/g, '<br><br>');
             
             return html;
         }
