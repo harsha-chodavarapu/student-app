@@ -397,6 +397,8 @@
 
         .sidebar-nav li {
             margin-bottom: 6px;
+            position: relative;
+            z-index: 5;
         }
 
         .sidebar-nav a {
@@ -408,6 +410,10 @@
             border-radius: 8px;
             transition: all 0.3s ease;
             font-weight: 500;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .sidebar-nav a:hover, .sidebar-nav a.active {
@@ -426,6 +432,18 @@
             margin-right: 8px;
             width: 18px;
             text-align: center;
+            pointer-events: none;
+        }
+        
+        /* Specific fix for My Courses button */
+        #nav-courses {
+            position: relative;
+            z-index: 15;
+        }
+        
+        #nav-courses:hover {
+            background: rgba(255,255,255,0.2) !important;
+            transform: translateX(5px) !important;
         }
 
         .profile-block {
@@ -17444,9 +17462,27 @@
         }
 
         function showMyCourses() {
+            console.log('My Courses clicked');
             updateNavigation('courses');
             loadMyCourses();
         }
+        
+        // Ensure My Courses button is fully clickable
+        document.addEventListener('DOMContentLoaded', function() {
+            const myCoursesBtn = document.getElementById('nav-courses');
+            if (myCoursesBtn) {
+                // Add click event listener as backup
+                myCoursesBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('My Courses button clicked via event listener');
+                    showMyCourses();
+                });
+                
+                // Ensure the entire button area is clickable
+                myCoursesBtn.style.cursor = 'pointer';
+                myCoursesBtn.style.userSelect = 'none';
+            }
+        });
 
         function showAskHub() {
             updateNavigation('askhub');
