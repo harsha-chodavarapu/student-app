@@ -18300,10 +18300,10 @@
                                 📥 Download PDF
                             </button>
                             ${material.isBookmarked ? 
-                                `<button class="btn btn-secondary" onclick="unbookmarkMaterial('${material.id}')">
+                                `<button class="btn btn-secondary" onclick="unbookmarkMaterial('${material.id}', this)" id="bookmarkBtn-${material.id}">
                                     ❌ Remove Bookmark
                                 </button>` :
-                                `                                <button class="btn btn-secondary" onclick="bookmarkMaterial('${material.id}')">
+                                `                                <button class="btn btn-secondary" onclick="bookmarkMaterial('${material.id}', this)" id="bookmarkBtn-${material.id}">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Bookmark Material
                                 </button>`
                             }
@@ -19070,10 +19070,18 @@
             return card;
         }
         
-        async function bookmarkMaterial(materialId) {
+        async function bookmarkMaterial(materialId, buttonElement) {
             if (!authToken) {
                 console.log('No auth token available for bookmarking');
+                showStatus('Please log in to bookmark materials', 'error');
                 return;
+            }
+            
+            // Disable button and show loading state
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.innerHTML = '⏳ Bookmarking...';
+                buttonElement.style.opacity = '0.7';
             }
             
             try {
@@ -19100,6 +19108,22 @@
                 const data = await response.json();
                 showStatus(data.message || 'Material bookmarked successfully', 'success', 'searchMessage');
                 
+                // Update button to show success
+                if (buttonElement) {
+                    buttonElement.innerHTML = '✅ Bookmarked!';
+                    buttonElement.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                    setTimeout(() => {
+                        buttonElement.innerHTML = '❌ Remove Bookmark';
+                        buttonElement.style.background = '';
+                        buttonElement.disabled = false;
+                        buttonElement.style.opacity = '1';
+                        buttonElement.onclick = () => unbookmarkMaterial(materialId, buttonElement);
+                    }, 2000);
+                }
+                
+                // Update UI without refresh
+                updateMaterialBookmarkStatus(materialId, true);
+                
                 // Refresh modal if it's currently open
                 const modal = document.querySelector('.modal-overlay');
                 if (modal) {
@@ -19118,10 +19142,18 @@
             }
         }
         
-        async function unbookmarkMaterial(materialId) {
+        async function unbookmarkMaterial(materialId, buttonElement) {
             if (!authToken) {
                 console.log('No auth token available for unbookmarking');
+                showStatus('Please log in to unbookmark materials', 'error');
                 return;
+            }
+            
+            // Disable button and show loading state
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.innerHTML = '⏳ Removing...';
+                buttonElement.style.opacity = '0.7';
             }
             
             try {
@@ -19147,6 +19179,22 @@
                 
                 const data = await response.json();
                 showStatus(data.message || 'Material unbookmarked successfully', 'success', 'searchMessage');
+                
+                // Update button to show success
+                if (buttonElement) {
+                    buttonElement.innerHTML = '✅ Removed!';
+                    buttonElement.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+                    setTimeout(() => {
+                        buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>Bookmark Material';
+                        buttonElement.style.background = '';
+                        buttonElement.disabled = false;
+                        buttonElement.style.opacity = '1';
+                        buttonElement.onclick = () => bookmarkMaterial(materialId, buttonElement);
+                    }, 2000);
+                }
+                
+                // Update UI without refresh
+                updateMaterialBookmarkStatus(materialId, false);
                 
                 // Refresh modal if it's currently open
                 const modal = document.querySelector('.modal-overlay');
