@@ -16980,41 +16980,127 @@
             // Courses will be loaded when user navigates to My Courses page
         }
 
-        // Force scrollbar styling - Subtle Theme
+        // Force scrollbar styling - Multiple Approaches
         function applyScrollbarStyling() {
-            // Add CSS to head if not already present
-            if (!document.getElementById('scrollbar-styles')) {
-                const style = document.createElement('style');
-                style.id = 'scrollbar-styles';
-                style.textContent = `
-                    ::-webkit-scrollbar {
-                        width: 8px !important;
-                        height: 8px !important;
-                    }
-                    ::-webkit-scrollbar-track {
-                        background: #1a1a1a !important;
-                        border-radius: 4px !important;
-                    }
-                    ::-webkit-scrollbar-thumb {
-                        background: #666666 !important;
-                        border-radius: 4px !important;
-                        border: 1px solid #1a1a1a !important;
-                    }
-                    ::-webkit-scrollbar-thumb:hover {
-                        background: #888888 !important;
-                    }
-                    html, body, * {
-                        scrollbar-width: thin !important;
-                        scrollbar-color: #666666 #1a1a1a !important;
-                    }
-                `;
-                document.head.appendChild(style);
+            // Remove any existing scrollbar styles first
+            const existingStyle = document.getElementById('scrollbar-styles');
+            if (existingStyle) {
+                existingStyle.remove();
             }
+
+            // Create new style with multiple approaches
+            const style = document.createElement('style');
+            style.id = 'scrollbar-styles';
+            style.textContent = `
+                /* Approach 1: Direct webkit styling */
+                ::-webkit-scrollbar {
+                    width: 8px !important;
+                    height: 8px !important;
+                    background: transparent !important;
+                }
+                
+                ::-webkit-scrollbar-track {
+                    background: #1a1a1a !important;
+                    border-radius: 4px !important;
+                    border: none !important;
+                }
+                
+                ::-webkit-scrollbar-thumb {
+                    background: #666666 !important;
+                    border-radius: 4px !important;
+                    border: 1px solid #1a1a1a !important;
+                    min-height: 20px !important;
+                }
+                
+                ::-webkit-scrollbar-thumb:hover {
+                    background: #888888 !important;
+                }
+                
+                ::-webkit-scrollbar-thumb:active {
+                    background: #999999 !important;
+                }
+                
+                ::-webkit-scrollbar-corner {
+                    background: #1a1a1a !important;
+                }
+                
+                /* Approach 2: Force on all elements */
+                *::-webkit-scrollbar {
+                    width: 8px !important;
+                    height: 8px !important;
+                }
+                
+                *::-webkit-scrollbar-track {
+                    background: #1a1a1a !important;
+                    border-radius: 4px !important;
+                }
+                
+                *::-webkit-scrollbar-thumb {
+                    background: #666666 !important;
+                    border-radius: 4px !important;
+                    border: 1px solid #1a1a1a !important;
+                }
+                
+                *::-webkit-scrollbar-thumb:hover {
+                    background: #888888 !important;
+                }
+                
+                /* Approach 3: Firefox styling */
+                html, body, * {
+                    scrollbar-width: thin !important;
+                    scrollbar-color: #666666 #1a1a1a !important;
+                }
+                
+                /* Approach 4: Force override any system settings */
+                html {
+                    scrollbar-width: thin !important;
+                    scrollbar-color: #666666 #1a1a1a !important;
+                }
+                
+                body {
+                    scrollbar-width: thin !important;
+                    scrollbar-color: #666666 #1a1a1a !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Also try to force apply to body
+            document.body.style.scrollbarWidth = 'thin';
+            document.body.style.scrollbarColor = '#666666 #1a1a1a';
+            
+            console.log('Scrollbar styling applied');
         }
 
         // Apply scrollbar styling on page load
         document.addEventListener('DOMContentLoaded', applyScrollbarStyling);
         applyScrollbarStyling(); // Also apply immediately
+        
+        // Add test button for scrollbar debugging
+        function addScrollbarTestButton() {
+            const testButton = document.createElement('button');
+            testButton.textContent = 'Test Scrollbar';
+            testButton.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                z-index: 9999;
+                background: #9C27B0;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+            `;
+            testButton.onclick = function() {
+                applyScrollbarStyling();
+                alert('Scrollbar styling reapplied! Check console for details.');
+            };
+            document.body.appendChild(testButton);
+        }
+        
+        // Add test button after DOM loads
+        document.addEventListener('DOMContentLoaded', addScrollbarTestButton);
 
         function showTab(tabId) {
             // Hide all tab contents
