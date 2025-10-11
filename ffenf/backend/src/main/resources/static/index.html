@@ -2347,72 +2347,72 @@
             line-height: 1.4;
         }
 
-        /* Custom Scrollbar Styling - Enhanced */
+        /* Custom Scrollbar Styling - Subtle Theme Match */
         html {
             scrollbar-width: thin;
-            scrollbar-color: #9C27B0 #2c2c2c;
+            scrollbar-color: #666666 #1a1a1a;
         }
 
         body {
             scrollbar-width: thin;
-            scrollbar-color: #9C27B0 #2c2c2c;
+            scrollbar-color: #666666 #1a1a1a;
         }
 
         * {
             scrollbar-width: thin;
-            scrollbar-color: #9C27B0 #2c2c2c;
+            scrollbar-color: #666666 #1a1a1a;
         }
 
-        /* Webkit Scrollbar Styling */
+        /* Webkit Scrollbar Styling - Subtle */
         ::-webkit-scrollbar {
-            width: 14px !important;
-            height: 14px !important;
+            width: 8px !important;
+            height: 8px !important;
         }
 
         ::-webkit-scrollbar-track {
-            background: #2c2c2c !important;
-            border-radius: 7px !important;
+            background: #1a1a1a !important;
+            border-radius: 4px !important;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #9C27B0, #E91E63) !important;
-            border-radius: 7px !important;
-            border: 2px solid #2c2c2c !important;
+            background: #666666 !important;
+            border-radius: 4px !important;
+            border: 1px solid #1a1a1a !important;
             transition: all 0.3s ease !important;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #7B1FA2, #C2185B) !important;
-            border: 1px solid #2c2c2c !important;
+            background: #888888 !important;
+            border: 1px solid #1a1a1a !important;
         }
 
         ::-webkit-scrollbar-thumb:active {
-            background: linear-gradient(135deg, #6A1B9A, #AD1457) !important;
+            background: #999999 !important;
         }
 
         ::-webkit-scrollbar-corner {
-            background: #2c2c2c !important;
+            background: #1a1a1a !important;
         }
 
         /* Force scrollbar styling on all elements */
         *::-webkit-scrollbar {
-            width: 14px !important;
-            height: 14px !important;
+            width: 8px !important;
+            height: 8px !important;
         }
 
         *::-webkit-scrollbar-track {
-            background: #2c2c2c !important;
-            border-radius: 7px !important;
+            background: #1a1a1a !important;
+            border-radius: 4px !important;
         }
 
         *::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #9C27B0, #E91E63) !important;
-            border-radius: 7px !important;
-            border: 2px solid #2c2c2c !important;
+            background: #666666 !important;
+            border-radius: 4px !important;
+            border: 1px solid #1a1a1a !important;
         }
 
         *::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #7B1FA2, #C2185B) !important;
+            background: #888888 !important;
         }
 
         /* Custom scrollbar for specific containers */
@@ -16980,7 +16980,7 @@
             // Courses will be loaded when user navigates to My Courses page
         }
 
-        // Force scrollbar styling
+        // Force scrollbar styling - Subtle Theme
         function applyScrollbarStyling() {
             // Add CSS to head if not already present
             if (!document.getElementById('scrollbar-styles')) {
@@ -16988,24 +16988,24 @@
                 style.id = 'scrollbar-styles';
                 style.textContent = `
                     ::-webkit-scrollbar {
-                        width: 14px !important;
-                        height: 14px !important;
+                        width: 8px !important;
+                        height: 8px !important;
                     }
                     ::-webkit-scrollbar-track {
-                        background: #2c2c2c !important;
-                        border-radius: 7px !important;
+                        background: #1a1a1a !important;
+                        border-radius: 4px !important;
                     }
                     ::-webkit-scrollbar-thumb {
-                        background: linear-gradient(135deg, #9C27B0, #E91E63) !important;
-                        border-radius: 7px !important;
-                        border: 2px solid #2c2c2c !important;
+                        background: #666666 !important;
+                        border-radius: 4px !important;
+                        border: 1px solid #1a1a1a !important;
                     }
                     ::-webkit-scrollbar-thumb:hover {
-                        background: linear-gradient(135deg, #7B1FA2, #C2185B) !important;
+                        background: #888888 !important;
                     }
                     html, body, * {
                         scrollbar-width: thin !important;
-                        scrollbar-color: #9C27B0 #2c2c2c !important;
+                        scrollbar-color: #666666 #1a1a1a !important;
                     }
                 `;
                 document.head.appendChild(style);
