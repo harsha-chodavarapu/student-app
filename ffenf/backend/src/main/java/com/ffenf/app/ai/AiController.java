@@ -213,12 +213,17 @@ public class AiController {
         int cost = 1;
         boolean testingMode = false; // keep false in production
 
+        // Reload latest user balance from DB right before checking
+        User userForBalance = users.findById(user.getId()).orElse(user);
+        int availableCoins = userForBalance.getCoins();
+        System.out.println("AI coin check — user=" + userForBalance.getEmail() + ", coins=" + availableCoins + ", cost=" + cost);
+
         // Require at least 1 coin
-        if (user.getCoins() < cost) {
+        if (availableCoins < cost) {
             return ResponseEntity.badRequest().body(Map.of(
                 "error", "Insufficient coins",
                 "required", cost,
-                "available", user.getCoins()
+                "available", availableCoins
             ));
         }
 
@@ -227,12 +232,12 @@ public class AiController {
         System.out.println("Proceeding with new AI generation for material: " + materialId + ", type: " + type);
 
         // Deduct coins immediately when starting a generation
-        user.setCoins(user.getCoins() - cost);
-        users.save(user);
+        userForBalance.setCoins(availableCoins - cost);
+        users.save(userForBalance);
 
         // Record coin transaction
         CoinTransaction coinTx = new CoinTransaction();
-        coinTx.setUserId(user.getId());
+        coinTx.setUserId(userForBalance.getId());
         coinTx.setDelta(-cost);
         coinTx.setReason("ai_generation_spend");
         coinTx.setRefId(materialId);

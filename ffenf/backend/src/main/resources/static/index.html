@@ -17937,6 +17937,7 @@
                     await fetchProfile(); // refresh
                 }
             } catch (e) {}
+            // Re-evaluate using latest fetched value
             if (!currentUser || (currentUser.coins ?? 0) < 1) {
                 showStatus('You need at least 1 coin to use AI Tools.', 'error', 'aiMessage');
                 return;
