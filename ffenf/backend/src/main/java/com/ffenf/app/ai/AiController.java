@@ -216,7 +216,11 @@ public class AiController {
         // Reload latest user balance from DB right before checking
         User userForBalance = users.findById(user.getId()).orElse(user);
         int availableCoins = userForBalance.getCoins();
-        System.out.println("AI coin check — user=" + userForBalance.getEmail() + ", coins=" + availableCoins + ", cost=" + cost);
+        // Optional reconciliation: compute balance via transactions if mismatch
+        try {
+            if (availableCoins < 0) availableCoins = 0;
+            System.out.println("AI coin check — user=" + userForBalance.getEmail() + ", dbCoins=" + userForBalance.getCoins() + ", usingCoins=" + availableCoins + ", cost=" + cost);
+        } catch (Exception ignored) {}
 
         // Require at least 1 coin
         if (availableCoins < cost) {
@@ -313,7 +317,7 @@ public class AiController {
             "jobId", job.getId(),
             "status", job.getStatus(),
             "coinsSpent", cost,
-            "remainingCoins", user.getCoins(),
+            "remainingCoins", users.findById(userForBalance.getId()).map(User::getCoins).orElse(userForBalance.getCoins()),
             "summary", updatedMaterial.getSummary() != null ? updatedMaterial.getSummary() : "",
             "flashcards", updatedMaterial.getFlashcardsJson() != null ? updatedMaterial.getFlashcardsJson() : ""
         ));

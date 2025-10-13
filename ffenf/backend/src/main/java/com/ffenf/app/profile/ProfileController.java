@@ -65,7 +65,8 @@ public class ProfileController {
         response.put("id", user.getId());
         response.put("email", user.getEmail());
         response.put("name", user.getName() != null ? user.getName() : "Test User");
-        response.put("coins", user.getCoins());
+        // Always read fresh coins from DB
+        response.put("coins", users.findById(user.getId()).map(User::getCoins).orElse(user.getCoins()));
         response.put("uploadsCount", totalUploads);
         response.put("reviewsCount", totalReviews);
         response.put("createdAt", user.getCreatedAt());
