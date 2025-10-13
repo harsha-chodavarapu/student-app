@@ -214,12 +214,14 @@ public class AiController {
         boolean testingMode = false; // keep false in production
 
         // Reload latest user balance from DB right before checking
-        User userForBalance = users.findById(user.getId()).orElse(user);
-        int availableCoins = userForBalance.getCoins();
-        // Optional reconciliation: compute balance via transactions if mismatch
+        User userById = users.findById(user.getId()).orElse(user);
+        int coinsFromEmailLookup = user.getCoins();
+        int coinsFromIdLookup = userById.getCoins();
+        int availableCoins = Math.max(coinsFromEmailLookup, coinsFromIdLookup);
         try {
             if (availableCoins < 0) availableCoins = 0;
-            System.out.println("AI coin check — user=" + userForBalance.getEmail() + ", dbCoins=" + userForBalance.getCoins() + ", usingCoins=" + availableCoins + ", cost=" + cost);
+            System.out.println("AI coin check — user=" + userById.getEmail() + 
+                ", coinsFromEmail=" + coinsFromEmailLookup + ", coinsFromId=" + coinsFromIdLookup + ", usingCoins=" + availableCoins + ", cost=" + cost);
         } catch (Exception ignored) {}
 
         // Require at least 1 coin
@@ -236,12 +238,14 @@ public class AiController {
         System.out.println("Proceeding with new AI generation for material: " + materialId + ", type: " + type);
 
         // Deduct coins immediately when starting a generation
-        userForBalance.setCoins(availableCoins - cost);
-        users.save(userForBalance);
+        int newBalance = availableCoins - cost;
+        userById.setCoins(newBalance);
+        users.save(userById);
+        try { user.setCoins(newBalance); } catch (Exception ignored) {}
 
         // Record coin transaction
         CoinTransaction coinTx = new CoinTransaction();
-        coinTx.setUserId(userForBalance.getId());
+        coinTx.setUserId(userById.getId());
         coinTx.setDelta(-cost);
         coinTx.setReason("ai_generation_spend");
         coinTx.setRefId(materialId);
@@ -317,7 +321,7 @@ public class AiController {
             "jobId", job.getId(),
             "status", job.getStatus(),
             "coinsSpent", cost,
-            "remainingCoins", users.findById(userForBalance.getId()).map(User::getCoins).orElse(userForBalance.getCoins()),
+            "remainingCoins", users.findById(userById.getId()).map(User::getCoins).orElse(newBalance),
             "summary", updatedMaterial.getSummary() != null ? updatedMaterial.getSummary() : "",
             "flashcards", updatedMaterial.getFlashcardsJson() != null ? updatedMaterial.getFlashcardsJson() : ""
         ));
