@@ -438,4 +438,26 @@ public class ProfileController {
             this.totalMaterials = totalMaterials;
         }
     }
+
+    @PostMapping("/me/fix-coins")
+    public ResponseEntity<Map<String, Object>> fixCoins(Authentication auth) {
+        String email = auth.getName();
+        User user = users.findByEmail(email).orElseThrow();
+        
+        // Set coins to 1 if they're 0 (one-time fix)
+        if (user.getCoins() == 0) {
+            user.setCoins(1);
+            users.save(user);
+            
+            Map<String, Object> response = new java.util.HashMap<>();
+            response.put("message", "Coins fixed! You now have 1 coin.");
+            response.put("coins", user.getCoins());
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, Object> response = new java.util.HashMap<>();
+            response.put("message", "You already have coins: " + user.getCoins());
+            response.put("coins", user.getCoins());
+            return ResponseEntity.ok(response);
+        }
+    }
 }

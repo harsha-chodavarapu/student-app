@@ -16929,6 +16929,9 @@
                         <div class="spinner-inner"></div>
                     </div>
                 </button>
+                <button id="fixCoinsBtn" class="btn" onclick="fixCoins()" style="background: linear-gradient(135deg, #28a745, #20c997); margin-left: 10px;">
+                    🔧 Fix Coins
+                </button>
                 <div id="aiProgress" class="ai-progress hidden">
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
@@ -17919,6 +17922,35 @@
                 
                 const existingFlashcards = aiContentSection.querySelector('[class*="flashcard"]');
                 if (existingFlashcards) existingFlashcards.remove();
+            }
+        }
+
+        async function fixCoins() {
+            if (!authToken) {
+                showStatus('Please log in first', 'error', 'aiMessage');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/profile/me/fix-coins`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showStatus(data.message, 'success', 'aiMessage');
+                    fetchProfile(); // Refresh profile to update coin display
+                } else {
+                    const errorData = await response.json();
+                    showStatus('Failed to fix coins: ' + (errorData.message || 'Unknown error'), 'error', 'aiMessage');
+                }
+            } catch (error) {
+                console.error('Error fixing coins:', error);
+                showStatus('Network error: ' + error.message, 'error', 'aiMessage');
             }
         }
 
