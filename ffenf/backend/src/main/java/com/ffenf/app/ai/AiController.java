@@ -226,11 +226,17 @@ public class AiController {
 
         // Require at least 1 coin
         if (availableCoins < cost) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "Insufficient coins",
-                "required", cost,
-                "available", availableCoins
-            ));
+            // Try a last‑chance refresh from DB (race conditions or read replicas)
+            User refreshed = users.findById(userById.getId()).orElse(userById);
+            int refreshedCoins = Math.max(availableCoins, refreshed.getCoins());
+            if (refreshedCoins < cost) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Insufficient coins",
+                    "required", cost,
+                    "available", refreshedCoins
+                ));
+            }
+            availableCoins = refreshedCoins;
         }
 
         // Allow regeneration - don't check for existing jobs
