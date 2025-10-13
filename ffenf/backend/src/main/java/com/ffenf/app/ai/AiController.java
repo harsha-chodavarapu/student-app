@@ -209,12 +209,12 @@ public class AiController {
             }
         }
 
-        // Check if user has enough coins (2 coins per generation) - DISABLED FOR TESTING
-        int cost = 2;
-        boolean testingMode = false; // Set to false to re-enable coin usage
-        
-        boolean skipCoinCheck = true; // Set to false to re-enable coin checking
-        if (!skipCoinCheck && user.getCoins() < cost) {
+        // Enforce coin usage: 1 coin per AI generation
+        int cost = 1;
+        boolean testingMode = false; // keep false in production
+
+        // Require at least 1 coin
+        if (user.getCoins() < cost) {
             return ResponseEntity.badRequest().body(Map.of(
                 "error", "Insufficient coins",
                 "required", cost,
@@ -226,22 +226,17 @@ public class AiController {
         // Users should be able to generate fresh content each time
         System.out.println("Proceeding with new AI generation for material: " + materialId + ", type: " + type);
 
-        // Deduct coins - DISABLED FOR TESTING
-        boolean skipCoinDeduction = true; // Set to false to re-enable coin deduction
-        if (!skipCoinDeduction) {
-            user.setCoins(user.getCoins() - cost);
-            users.save(user);
+        // Deduct coins immediately when starting a generation
+        user.setCoins(user.getCoins() - cost);
+        users.save(user);
 
-            // Record coin transaction
-            CoinTransaction coinTx = new CoinTransaction();
-            coinTx.setUserId(user.getId());
-            coinTx.setDelta(-cost);
-            coinTx.setReason("ai_generation_spend");
-            coinTx.setRefId(materialId);
-            coinTransactions.save(coinTx);
-        } else {
-            System.out.println("TESTING MODE: Skipping coin deduction for AI generation");
-        }
+        // Record coin transaction
+        CoinTransaction coinTx = new CoinTransaction();
+        coinTx.setUserId(user.getId());
+        coinTx.setDelta(-cost);
+        coinTx.setReason("ai_generation_spend");
+        coinTx.setRefId(materialId);
+        coinTransactions.save(coinTx);
 
         // Verify material exists before creating AI job
         Material savedMaterial = materials.findById(materialId).orElse(null);

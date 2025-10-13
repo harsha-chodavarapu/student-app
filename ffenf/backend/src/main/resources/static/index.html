@@ -17931,6 +17931,17 @@
                 return;
             }
 
+            // Frontend guard: require at least 1 coin
+            try {
+                if (!currentUser || (currentUser.coins ?? 0) < 1) {
+                    await fetchProfile(); // refresh
+                }
+            } catch (e) {}
+            if (!currentUser || (currentUser.coins ?? 0) < 1) {
+                showStatus('You need at least 1 coin to use AI Tools.', 'error', 'aiMessage');
+                return;
+            }
+
             // Show loading state
             setAIProcessingState(true);
 
@@ -17950,11 +17961,11 @@
                         setAIProcessingState(false);
                         showStatus('AI generation completed successfully!', 'success', 'aiMessage');
                         displayGeneratedContentDirectly(data, type, materialId);
-                        fetchProfile(); // Update coins
+                        fetchProfile(); // Update coins after spend
                     } else {
                         showStatus('✅ AI generation started! Processing PDF...', 'success', 'aiMessage');
                         updateProgressText('Uploading PDF to OpenAI...');
-                        fetchProfile(); // Update coins
+                        fetchProfile(); // Update coins after spend
                         
                         // Poll for completion and display results
                         pollForCompletion(data.jobId, materialId, type);
