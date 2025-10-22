@@ -33,11 +33,12 @@ public class SecurityConfig {
                 .requestMatchers("/materials/upload").permitAll()
                 .requestMatchers("/materials/upload-new").permitAll()
                 .requestMatchers("/materials/test-static").permitAll()
-				.requestMatchers("/askhub/questions").permitAll()  // Allow reading questions without auth
+                .requestMatchers("/askhub/questions").permitAll()  // Allow reading questions without auth
 				.requestMatchers("/askhub/questions/{id}").permitAll()
 				.requestMatchers("/askhub/questions/search").permitAll()
 				.requestMatchers("/askhub/generate").permitAll()
-                .requestMatchers("/ai/**").permitAll()
+                .requestMatchers("/ai/debug/**").permitAll()  // Only debug endpoints are public
+                .requestMatchers("/ai/**").authenticated()  // AI generation requires auth
                 .requestMatchers("/admin/cleanup/**").permitAll()
                 .anyRequest().permitAll()
 			)

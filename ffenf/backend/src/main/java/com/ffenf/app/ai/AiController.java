@@ -138,8 +138,10 @@ public class AiController {
         User user;
         if (auth != null && auth.getName() != null) {
             String email = auth.getName();
-            user = users.findByEmail(email).orElseThrow();
+            user = users.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found: " + email));
+            System.out.println("AUTHENTICATED USER: Using real user " + email + " for AI generation");
         } else {
+            System.out.println("NO AUTH - Falling back to test user");
             // Use existing test user or create one for testing mode
             user = users.findByEmail("test@example.com").orElse(null);
             if (user == null) {
