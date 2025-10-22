@@ -16929,12 +16929,6 @@
                         <div class="spinner-inner"></div>
                     </div>
                 </button>
-                <button id="fixCoinsBtn" class="btn" onclick="fixCoins()" style="background: linear-gradient(135deg, #28a745, #20c997); margin-left: 10px;">
-                    🔧 Fix Coins
-                </button>
-                <button id="debugCoinsBtn" class="btn" onclick="debugCoins()" style="background: linear-gradient(135deg, #ffc107, #ff9800); margin-left: 10px;">
-                    🔍 Debug Coins
-                </button>
                 <div id="aiProgress" class="ai-progress hidden">
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
@@ -17928,64 +17922,6 @@
             }
         }
 
-        async function fixCoins() {
-            if (!authToken) {
-                showStatus('Please log in first', 'error', 'aiMessage');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/profile/me/fix-coins`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    showStatus(data.message, 'success', 'aiMessage');
-                    fetchProfile(); // Refresh profile to update coin display
-                } else {
-                    const errorData = await response.json();
-                    showStatus('Failed to fix coins: ' + (errorData.message || 'Unknown error'), 'error', 'aiMessage');
-                }
-            } catch (error) {
-                console.error('Error fixing coins:', error);
-                showStatus('Network error: ' + error.message, 'error', 'aiMessage');
-            }
-        }
-
-        async function debugCoins() {
-            if (!authToken) {
-                showStatus('Please log in first', 'error', 'aiMessage');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/profile/me/debug-coins`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const debugInfo = `Email: ${data.email}\nUserID: ${data.userId}\nCoins from Email: ${data.coinsFromEmail}\nCoins from ID: ${data.coinsFromId}\nUsers Match: ${data.usersMatch}`;
-                    showStatus('Debug Info: ' + debugInfo, 'info', 'aiMessage');
-                    console.log('Coin Debug Info:', data);
-                } else {
-                    const errorData = await response.json();
-                    showStatus('Failed to debug coins: ' + (errorData.message || 'Unknown error'), 'error', 'aiMessage');
-                }
-            } catch (error) {
-                console.error('Error debugging coins:', error);
-                showStatus('Network error: ' + error.message, 'error', 'aiMessage');
-            }
-        }
 
         async function generateAI() {
             const materialId = document.getElementById('aiMaterialSelect').value;

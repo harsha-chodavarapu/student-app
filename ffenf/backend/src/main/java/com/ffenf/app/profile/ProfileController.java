@@ -439,40 +439,4 @@ public class ProfileController {
         }
     }
 
-    @PostMapping("/me/fix-coins")
-    public ResponseEntity<Map<String, Object>> fixCoins(Authentication auth) {
-        String email = auth.getName();
-        User user = users.findByEmail(email).orElseThrow();
-        
-        // Force set coins to 1 regardless of current value (aggressive fix)
-        user.setCoins(1);
-        users.save(user);
-        
-        // Also try to find by ID and update that too
-        User userById = users.findById(user.getId()).orElse(null);
-        if (userById != null) {
-            userById.setCoins(1);
-            users.save(userById);
-        }
-        
-        Map<String, Object> response = new java.util.HashMap<>();
-        response.put("message", "Coins forcefully set to 1! You now have 1 coin.");
-        response.put("coins", 1);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/me/debug-coins")
-    public ResponseEntity<Map<String, Object>> debugCoins(Authentication auth) {
-        String email = auth.getName();
-        User userByEmail = users.findByEmail(email).orElseThrow();
-        User userById = users.findById(userByEmail.getId()).orElse(null);
-        
-        Map<String, Object> response = new java.util.HashMap<>();
-        response.put("email", email);
-        response.put("userId", userByEmail.getId().toString());
-        response.put("coinsFromEmail", userByEmail.getCoins());
-        response.put("coinsFromId", userById != null ? userById.getCoins() : "null");
-        response.put("usersMatch", userById != null && userByEmail.getId().equals(userById.getId()));
-        return ResponseEntity.ok(response);
-    }
 }
