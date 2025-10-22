@@ -77,8 +77,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private boolean isPublicEndpoint(String path) {
         // Public health and auth endpoints
         if (path.startsWith("/health") || path.startsWith("/actuator/health") ||
-            path.startsWith("/auth/register") || path.startsWith("/auth/login") ||
-            path.startsWith("/ai/")) {
+            path.startsWith("/auth/register") || path.startsWith("/auth/login")) {
+            return true;
+        }
+
+        // Only AI debug endpoints are public, not AI generation
+        if (path.startsWith("/ai/debug/")) {
             return true;
         }
 
