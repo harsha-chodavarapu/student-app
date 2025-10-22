@@ -218,6 +218,16 @@ public class AiController {
         int coinsFromEmailLookup = user.getCoins();
         int coinsFromIdLookup = userById.getCoins();
         int availableCoins = Math.max(coinsFromEmailLookup, coinsFromIdLookup);
+        
+        // Enhanced logging for debugging
+        System.out.println("COIN DEBUG DETAILED:");
+        System.out.println("  User Email: " + userById.getEmail());
+        System.out.println("  User ID: " + userById.getId());
+        System.out.println("  Coins from Email lookup: " + coinsFromEmailLookup);
+        System.out.println("  Coins from ID lookup: " + coinsFromIdLookup);
+        System.out.println("  Available coins (max): " + availableCoins);
+        System.out.println("  Required cost: " + cost);
+        
         try {
             if (availableCoins < 0) availableCoins = 0;
             System.out.println("AI coin check — user=" + userById.getEmail() + 
@@ -226,10 +236,16 @@ public class AiController {
 
         // Require at least 1 coin
         if (availableCoins < cost) {
+            System.out.println("COIN CHECK FAILED - Trying last chance refresh...");
             // Try a last‑chance refresh from DB (race conditions or read replicas)
             User refreshed = users.findById(userById.getId()).orElse(userById);
             int refreshedCoins = Math.max(availableCoins, refreshed.getCoins());
+            System.out.println("COIN DEBUG - Last chance refresh:");
+            System.out.println("  Refreshed user coins: " + refreshed.getCoins());
+            System.out.println("  Refreshed coins (max): " + refreshedCoins);
+            
             if (refreshedCoins < cost) {
+                System.out.println("COIN CHECK FINAL FAILURE - User has " + refreshedCoins + " coins but needs " + cost);
                 return ResponseEntity.badRequest().body(Map.of(
                     "error", "Insufficient coins",
                     "required", cost,
@@ -237,6 +253,9 @@ public class AiController {
                 ));
             }
             availableCoins = refreshedCoins;
+            System.out.println("COIN CHECK RECOVERED - Using " + availableCoins + " coins");
+        } else {
+            System.out.println("COIN CHECK PASSED - User has sufficient coins: " + availableCoins);
         }
 
         // Allow regeneration - don't check for existing jobs
